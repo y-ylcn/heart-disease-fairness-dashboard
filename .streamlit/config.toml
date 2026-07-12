@@ -1,0 +1,29 @@
+[theme]
+# Start from the light base, since the dashboard is meant to read clearly in a bright, airy layout
+base = "light"
+
+# A clear red as the primary colour, so the sliders, selected tab and other interactive parts stand out against the navy panel headings
+primaryColor = "#c0392b"
+
+# A very light grey main area, light enough that the caption text still reads clearly, while the white cards stay a touch distinct
+backgroundColor = "#f8fafc"
+
+# White cards and metric boxes, so they stand out against the soft grey background
+secondaryBackgroundColor = "#ffffff"
+
+# A near-black slate for the body text, dark enough to read clearly against the light background
+textColor = "#111827"
+
+# Rounded corners on the cards and controls, for a softer and more modern feel
+baseRadius = "medium"
+
+# A visible but soft border colour, so the panels are defined and the table grid lines between rows and columns stay readable
+borderColor = "#cbd5e1"
+
+# A light grey header row for the tables, so the row and column labels sit apart from the cells below
+dataframeHeaderBackgroundColor = "#e2e8f0"
+
+[theme.sidebar]
+# The same light grey as the table header row, so the controls panel reads as a defined block that matches the tables
+backgroundColor = "#e2e8f0"
+secondaryBackgroundColor = "#ffffff"

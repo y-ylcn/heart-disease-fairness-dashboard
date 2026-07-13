@@ -24,6 +24,6 @@ borderColor = "#cbd5e1"
 dataframeHeaderBackgroundColor = "#e2e8f0"
 
 [theme.sidebar]
-# The same light grey as the table header row, so the controls panel reads as a defined block that matches the tables
+# The same light grey as the table header row, so the control panel reads as a defined block that matches the tables
 backgroundColor = "#e2e8f0"
 secondaryBackgroundColor = "#ffffff"

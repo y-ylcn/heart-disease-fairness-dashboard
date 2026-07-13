@@ -320,13 +320,15 @@ with st.sidebar:
     # The threshold optimiser sets its own threshold for each sex, so the sliders are switched off when it is chosen
     optimiser_chosen = mitigation_name == 'Threshold Optimiser'
     female_threshold = st.slider('Female Threshold', 0.0, 1.0, 0.5, 0.01, disabled=optimiser_chosen,
-                                 help='The threshold applied to female patients. If the model\'s score for a patient '
-                                      'reaches this value or higher, she is flagged as having disease. Lowering the '
-                                      'threshold flags more of them, raising it flags fewer.')
+                                 help='The threshold used for female patients. A patient is flagged as having disease '
+                                      'when the model\'s score reaches it or goes above. The usual starting point is '
+                                      '0.50, meaning a patient is flagged once the model sees at least an even chance of '
+                                      'disease. Lowering the threshold flags more of them, raising it flags fewer.')
     male_threshold = st.slider('Male Threshold', 0.0, 1.0, 0.5, 0.01, disabled=optimiser_chosen,
-                               help='The threshold applied to male patients. If the model\'s score for a patient reaches '
-                                    'this value or higher, he is flagged as having disease. Setting the two thresholds '
-                                    'apart from each other is one way to trade fairness against accuracy between the groups.')
+                               help='The threshold used for male patients. A patient is flagged as having disease when '
+                                    'the model\'s score reaches it or goes above. The usual starting point is 0.50, '
+                                    'meaning a patient is flagged once the model sees at least an even chance of disease. '
+                                    'Lowering the threshold flags more of them, raising it flags fewer.')
     tolerance = st.slider('Tolerance', 0.0, 0.5, 0.1, 0.01,
                           help='How large a gap between the two groups still counts as fair. On the Fairness Metrics '
                                'tab a metric turns green when it sits within this tolerance and red when it falls '

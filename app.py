@@ -576,13 +576,13 @@ with tab_explain:
                    'downward towards healthy until it reached the final prediction. Red bars push towards disease and '
                    'blue bars push away from it. The values are given in log-odds, the model\'s internal scale rather '
                    'than probabilities, which is why some of them can be negative. The predicted label and outcome '
-                   'below follow the thresholds set on the sidebar, using the female or male threshold to match the '
+                   'below follow the thresholds set in the control panel, using the female or male threshold to match the '
                    'patient, so they update as the sliders are moved. The waterfall itself does not change, since it '
                    'explains the probability rather than the decision.')
         patient = st.number_input('Patient', 0, len(shap_values) - 1, 0)
  
         # Work out what the model predicted for this patient and whether it was a hit, a missed case or a false alarm
-        # The threshold comes from the sidebar, using the female or male slider to match the patient, so the outcome updates as the sliders move
+       # The threshold comes from the control panel, using the female or male slider to match the patient, so the outcome updates as the sliders move
         patient_threshold = female_threshold if group[patient] == 0 else male_threshold
         patient_label = 1 if proba[patient] >= patient_threshold else 0
         if patient_label == 1 and y_true[patient] == 0:
@@ -598,7 +598,7 @@ with tab_explain:
                              help='The model\'s estimated probability that this patient has disease, on a scale from 0 '
                                   'to 1. It is the log-odds output from the waterfall, converted into a probability.')
         patient_pred.metric('Predicted', 'Disease' if patient_label == 1 else 'No Disease',
-                            help='The decision the model makes for this patient at the threshold set on the sidebar for their group.')
+                            help='The decision the model makes for this patient at the threshold set in the control panel for their group.')
         patient_actual.metric('Actual', 'Disease' if y_true[patient] == 1 else 'No Disease',
                               help='Whether this patient truly has disease according to the data, which is what the '
                                    'prediction is checked against.')

@@ -582,7 +582,7 @@ with tab_explain:
         patient = st.number_input('Patient', 0, len(shap_values) - 1, 0)
  
         # Work out what the model predicted for this patient and whether it was a hit, a missed case or a false alarm
-       # The threshold comes from the control panel, using the female or male slider to match the patient, so the outcome updates as the sliders move
+        # The threshold comes from the control panel, using the female or male slider to match the patient, so the outcome updates as the sliders move
         patient_threshold = female_threshold if group[patient] == 0 else male_threshold
         patient_label = 1 if proba[patient] >= patient_threshold else 0
         if patient_label == 1 and y_true[patient] == 0:

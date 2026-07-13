@@ -97,7 +97,7 @@ st.markdown('''
     [data-testid="stTab"] [class*="SelectionIndicator"] {
         display: none;
     }
-    /* Keep the sidebar text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
+    /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] span {
@@ -142,7 +142,7 @@ METRIC_HELP = {
                                     'weight for a female and a male patient.',
     'Disparate Impact Ratio': 'The ratio of the two groups\' positive-prediction rates. A ratio of 1 means both groups '
                               'are flagged equally often. In this dashboard, the ratio is judged against the tolerance '
-                              'set in the sidebar, so it responds to the same fairness bar as the other '
+                              'set in the control panel, so it responds to the same fairness bar as the other '
                               'threshold-dependent metrics. The 0.8 line (the four-fifths rule) is also shown in the '
                               'comparison view as a common reference point.'}
  
@@ -295,7 +295,7 @@ st.write('This dashboard examines whether a tuned XGBoost heart disease model tr
 # List the three mitigation methods on their own, since the baseline is the untouched model rather than a mitigation
 mitigation_methods = ['SMOTE-NC', 'Reweighting', 'Threshold Optimiser']
  
-# Put all the controls in the sidebar, so they stay in one place while the user moves between the tabs
+# Put all the controls in the control panel, so they stay in one place while the user moves between the tabs
 with st.sidebar:
     st.header('Controls')
     dataset_name = st.selectbox('Dataset', list(DATASETS.keys()),
@@ -376,8 +376,8 @@ with tab_overview:
 
     # Give a plain description of the dataset in view, so the user knows what they are looking at before the analysis
     st.subheader('About This Dataset')
-    st.caption('This tab describes the dataset currently selected in the sidebar. It gives the size of the data and the '
-               'meaning of every feature the model uses. Switching the dataset in the sidebar updates everything shown '
+    st.caption('This tab describes the dataset currently selected in the control panel. It gives the size of the data and the '
+               'meaning of every feature the model uses. Switching the dataset in the control panel updates everything shown '
                'here, so each dataset can be read on its own terms.')
 
     # Show the full size after preprocessing, the size of the test set the dashboard works on, and the number of features
@@ -438,7 +438,7 @@ with tab_tradeoff:
                'Three of them are gaps between the two groups, so they read as fair when close to 0, while the '
                'disparate impact ratio compares the groups as a ratio, so it reads as fair when close to 1. For a '
                'reminder of what each one means, hover over the (i) beside it. A metric shows green when its value sits '
-               'within the tolerance set in the sidebar and red when it falls outside. Because the two groups have '
+               'within the tolerance set in the control panel and red when it falls outside. Because the two groups have '
                'different base rates, bringing one metric closer to fairness will usually push another away, and that '
                'tension is the trade-off at the heart of this dashboard. To see why these gaps arise, the Explanation '
                'tab breaks down how the model uses each feature for the two groups.')
@@ -510,7 +510,7 @@ with tab_explain:
     # The SHAP explanations were worked out for the baseline model only, so this tab shows a note when a mitigation is chosen
     if mitigation_name != 'Baseline':
         st.info('The explanations on this tab are worked out for the baseline model only, so they appear once the '
-                'baseline is selected in the sidebar. The SHAP values were saved for the baseline model, since that is '
+                'baseline is selected in the control panel. The SHAP values were saved for the baseline model, since that is '
                 'the one being audited, and the mitigations change the decisions rather than the explanation behind '
                 'them. Select the baseline to view the explanations, and use the Fairness Metrics, Calibration & ROC, '
                 'Errors and Dataset and Metric Comparison tabs to compare the mitigation methods.')
@@ -575,13 +575,16 @@ with tab_explain:
                    'patients, and traces how each feature pushed this patient\'s risk upward towards disease or '
                    'downward towards healthy until it reached the final prediction. Red bars push towards disease and '
                    'blue bars push away from it. The values are given in log-odds, the model\'s internal scale rather '
-                   'than probabilities, which is why some of them can be negative. The prediction shown here uses the '
-                   'baseline threshold of 0.50, separate from the sliders on the Fairness Metrics tab.')
+                   'than probabilities, which is why some of them can be negative. The predicted label and outcome '
+                   'below follow the thresholds set on the sidebar, using the female or male threshold to match the '
+                   'patient, so they update as the sliders are moved. The waterfall itself does not change, since it '
+                   'explains the probability rather than the decision.')
         patient = st.number_input('Patient', 0, len(shap_values) - 1, 0)
  
-        # Work out what the baseline model predicted for this patient and whether it was a hit, a missed case or a false alarm
-        # The prediction is taken at the baseline threshold, so it matches the baseline explanation shown in the waterfall
-        patient_label = 1 if proba[patient] >= 0.5 else 0
+        # Work out what the model predicted for this patient and whether it was a hit, a missed case or a false alarm
+        # The threshold comes from the sidebar, using the female or male slider to match the patient, so the outcome updates as the sliders move
+        patient_threshold = female_threshold if group[patient] == 0 else male_threshold
+        patient_label = 1 if proba[patient] >= patient_threshold else 0
         if patient_label == 1 and y_true[patient] == 0:
             error_type = 'False Alarm'
         elif patient_label == 0 and y_true[patient] == 1:
@@ -595,7 +598,7 @@ with tab_explain:
                              help='The model\'s estimated probability that this patient has disease, on a scale from 0 '
                                   'to 1. It is the log-odds output from the waterfall, converted into a probability.')
         patient_pred.metric('Predicted', 'Disease' if patient_label == 1 else 'No Disease',
-                            help='The decision the model makes for this patient at the baseline threshold of 0.5.')
+                            help='The decision the model makes for this patient at the threshold set on the sidebar for their group.')
         patient_actual.metric('Actual', 'Disease' if y_true[patient] == 1 else 'No Disease',
                               help='Whether this patient truly has disease according to the data, which is what the '
                                    'prediction is checked against.')

@@ -127,7 +127,7 @@ MITIGATIONS = {'Baseline': 'probability', 'SMOTE-NC': 'probability_smote', 'Rewe
 # The file suffix for each mitigation method, so the matching calibration files can be found by name
 CALIBRATION_SUFFIX = {'Baseline': 'baseline', 'SMOTE-NC': 'smote', 'Reweighting': 'reweight'}
  
-# The plain-language meaning of each fairness metric, shown as an (i) tooltip next to it on the fairness metrics panel
+# The plain-language meaning of each fairness metric, shown as a help tooltip next to it on the fairness metrics panel
 METRIC_HELP = {
     'Demographic Parity Difference': 'Whether the model flags disease at the same rate for both sexes. It measures the '
                                      'gap between the share of female patients and the share of male patients predicted '
@@ -146,7 +146,7 @@ METRIC_HELP = {
                               'threshold-dependent metrics. The 0.8 line (the four-fifths rule) is also shown in the '
                               'comparison view as a common reference point.'}
  
-# The plain-language meaning of each performance measure, shown as an (i) tooltip next to it on the performance panel
+# The plain-language meaning of each performance measure, shown as a help tooltip next to it on the performance panel
 PERF_HELP = {
     'Recall': 'The share of patients who truly have disease that the model correctly flags, so a higher value is '
               'better here. It is also known as the true positive rate, or sensitivity.',
@@ -439,7 +439,7 @@ with tab_tradeoff:
     st.caption('Each metric approaches fairness from a different angle, and no single one captures the whole picture. '
                'Three of them are gaps between the two groups, so they read as fair when close to 0, while the '
                'disparate impact ratio compares the groups as a ratio, so it reads as fair when close to 1. For a '
-               'reminder of what each one means, hover over the (i) beside it. A metric shows green when its value sits '
+               'reminder of what each one means, hover over the question mark beside it. A metric shows green when its value sits '
                'within the tolerance set in the control panel and red when it falls outside. Because the two groups have '
                'different base rates, bringing one metric closer to fairness will usually push another away, and that '
                'tension is the trade-off at the heart of this dashboard. To see why these gaps arise, the Explanation '
@@ -452,7 +452,7 @@ with tab_tradeoff:
             within = value >= (1 - tolerance)
         else:
             within = value <= tolerance
-        # The help text explains what each metric measures, shown as an (i) tooltip next to the value
+        # The help text explains what each metric measures, shown as a help tooltip next to the value
         columns[i].metric(name, '{:.4f}'.format(value), help=METRIC_HELP[name])
         if within:
             columns[i].success('Within Tolerance')
@@ -476,7 +476,7 @@ with tab_tradeoff:
                'the model catches. Precision is how often a flag turns out to be correct. The false negative rate is '
                'the share of real cases the model misses, and this is where under-diagnosis shows up, which matters '
                'most in a clinical setting. The false positive rate is the share of healthy patients flagged in error. '
-               'For a reminder, hover over the (i) on any of the values.')
+               'For a reminder, hover over the question mark on any of the values.')
     by_group = performance_by_sex.by_group
     female_recall, female_precision, male_recall, male_precision = st.columns(4)
     female_recall.metric('Female Recall', '{:.4f}'.format(by_group['Recall'].values[0]), help=PERF_HELP['Recall'])

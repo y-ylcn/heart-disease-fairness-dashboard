@@ -161,26 +161,26 @@ PERF_HELP = {
 # The description of every feature the model uses, shown as a table on the overview tab so each column can be understood
 FEATURE_INFO = {
     'uci': [('Age', 'Age of the patient in years'),
-            ('Sex', 'Sex of the patient, male or female'),
-            ('Chest Pain', 'Chest pain type: typical angina, atypical angina, non-anginal or asymptomatic'),
+            ('Sex', 'Sex of the patient (0 = female, 1 = male)'),
+            ('Chest Pain', 'Chest pain type (0 = asymptomatic, 1 = atypical angina, 2 = non-anginal, 3 = typical angina)'),
             ('Blood Pressure', 'Resting blood pressure on admission, in mm Hg'),
             ('Cholesterol', 'Serum cholesterol in mg/dl'),
-            ('Fasting Blood Sugar', 'Whether fasting blood sugar is greater than 120 mg/dl'),
-            ('Resting ECG', 'Resting electrocardiographic result: normal, ST-T abnormality or LV hypertrophy'),
+            ('Fasting Blood Sugar', 'Whether fasting blood sugar is greater than 120 mg/dl (0 = false, 1 = true)'),
+            ('Resting ECG', 'Resting electrocardiographic result (0 = LV hypertrophy, 1 = normal, 2 = ST-T abnormality)'),
             ('Max Heart Rate', 'Maximum heart rate achieved'),
-            ('Exercise Angina', 'Whether exercise induced angina, true or false'),
+            ('Exercise Angina', 'Whether exercise induced angina (0 = false, 1 = true)'),
             ('ST Depression', 'ST depression induced by exercise relative to rest')],
     'kaggle': [('Age', 'Age of the patient, converted from days to years'),
-               ('Gender', 'Gender of the patient, women or men'),
+               ('Gender', 'Gender of the patient (0 = women, 1 = men)'),
                ('Height', 'Height of the patient in centimetres'),
                ('Weight', 'Weight of the patient in kilograms'),
                ('Systolic BP', 'Systolic blood pressure'),
                ('Diastolic BP', 'Diastolic blood pressure'),
-               ('Cholesterol', 'Cholesterol level: normal, above normal or well above normal'),
-               ('Glucose', 'Glucose level: normal, above normal or well above normal'),
-               ('Smoking', 'Whether the patient smokes'),
-               ('Alcohol', 'Whether the patient drinks alcohol'),
-               ('Active', 'Whether the patient is physically active')]}
+               ('Cholesterol', 'Cholesterol level (1 = normal, 2 = above normal, 3 = well above normal)'),
+               ('Glucose', 'Glucose level (1 = normal, 2 = above normal, 3 = well above normal)'),
+               ('Smoking', 'Whether the patient smokes (0 = no, 1 = yes)'),
+               ('Alcohol', 'Whether the patient drinks alcohol (0 = no, 1 = yes)'),
+               ('Active', 'Whether the patient is physically active (0 = no, 1 = yes)')]}
  
 # A short note on how each dataset was prepared, so the overview tab can explain the patient counts
 DATASET_NOTES = {

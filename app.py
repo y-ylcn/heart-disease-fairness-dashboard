@@ -495,14 +495,15 @@ with tab_tradeoff:
     female_fnr_value = by_group['False Negative Rate'].values[0]
     male_fnr_value = by_group['False Negative Rate'].values[1]
  
-    # The female false negative rate is worked out over the female patients who truly have disease, so its reliability depends on how many there are
+    # The false negative rate for each group is worked out over the patients in that group who truly have disease, so its reliability depends on how many there are
     # When that number is small the rate is read as a direction rather than an exact figure, matching how the notebook treats the small female group
     female_true_cases = int(((group == 0) & (y_true == 1)).sum())
-    callout = ('At the current thresholds, the model misses **{:.1%}** of the female patients who truly have disease, '
-               'against **{:.1%}** of the male patients. A gap like this is exactly where under-diagnosis would surface.'
+    callout = ('At the current thresholds, the model misses **{:.1%}** of the female patients who truly have disease '
+               'and **{:.1%}** of the male patients. Any gap between these two figures is where under-diagnosis would '
+               'surface, since it means one group\'s real cases are missed more often than the other\'s.'
                .format(female_fnr_value, male_fnr_value))
     if female_true_cases < 30:
-        callout += (' That female figure rests on only {} patients who truly have disease, so it is best read as a '
+        callout += (' The female figure rests on only {} patients who truly have disease, so it is best read as a '
                     'strong signal of direction rather than an exact measurement.'.format(female_true_cases))
     st.info(callout)
  

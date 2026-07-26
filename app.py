@@ -125,7 +125,8 @@ st.markdown('''
     /* Darken the border on the dropdown controls, so they read as defined boxes rather than floating text on the near-white background */
     [data-testid="stSelectbox"] div[data-baseweb="select"] > div,
     div[data-baseweb="select"] > div {
-        border-color: #94a3b8 !important;
+        border: 1px solid #94a3b8 !important;
+        box-shadow: none !important;
     }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,

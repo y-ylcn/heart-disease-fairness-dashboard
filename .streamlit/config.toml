@@ -6,7 +6,7 @@ base = "light"
 primaryColor = "#c0392b"
 
 # A very light grey main area, light enough that the caption text still reads clearly, while the white cards stay a touch distinct
-backgroundColor = "#f8fafc"
+backgroundColor = "#f1f5f9"
 
 # White cards and metric boxes, so they stand out against the soft grey background
 secondaryBackgroundColor = "#ffffff"

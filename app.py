@@ -75,10 +75,11 @@ st.markdown('''
         padding: 0.5rem 1rem;
         font-weight: 500;
     }
-    /* Set the tab label text size on the inner text element, since the label sits inside a paragraph within the tab */
+    /* Set the tab label size and weight on the inner text element, since the label sits inside a paragraph within the tab */
     .stTabs [data-baseweb="tab"] p,
     [data-testid="stTab"] p {
         font-size: 0.95rem;
+        font-weight: 600;
     }
     /* Fill the selected tab in navy, so the current section stands out clearly from the others */
     .stTabs [aria-selected="true"],

@@ -78,7 +78,7 @@ st.markdown('''
     /* Set the tab label size and weight on the inner text element, since the label sits inside a paragraph within the tab */
     .stTabs [data-baseweb="tab"] p,
     [data-testid="stTab"] p {
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 600;
     }
     /* Fill the selected tab in navy, so the current section stands out clearly from the others */
@@ -117,7 +117,7 @@ st.markdown('''
     [data-testid="stExpander"] summary p {
         color: #1f3b6f;
         font-weight: 500;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     /* Match the arrow to the heading colour, since it sits inside the summary as a separate icon */
     [data-testid="stExpander"] summary svg {

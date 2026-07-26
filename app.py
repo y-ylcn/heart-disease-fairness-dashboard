@@ -39,7 +39,7 @@ st.markdown('''
     /* Give each metric a white card look with a soft border and shadow, so the boxes lift off the grey background */
     [data-testid="stMetric"] {
         background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #cbd5e1;
         border-radius: 0.5rem;
         padding: 0.75rem 1rem;
         box-shadow: 0 1px 3px rgba(31, 59, 111, 0.06);
@@ -121,6 +121,11 @@ st.markdown('''
     /* Match the arrow to the heading colour, since it sits inside the summary as a separate icon */
     [data-testid="stExpander"] summary svg {
         fill: #1f3b6f;
+    }
+    /* Darken the border on the dropdown controls, so they read as defined boxes rather than floating text on the near-white background */
+    [data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] > div {
+        border-color: #94a3b8;
     }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,

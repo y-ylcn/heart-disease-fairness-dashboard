@@ -122,10 +122,10 @@ st.markdown('''
     [data-testid="stExpander"] summary svg {
         fill: #1f3b6f;
     }
-    /* Darken the border on the dropdown controls, so they read as defined boxes rather than floating text on the near-white background */
+    /* Give the dropdown controls the same border as the metric cards, so the boxes on the page all read as one set */
     [data-testid="stSelectbox"] div[role="group"],
     [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-        border: 1px solid #94a3b8 !important;
+        border: 1px solid #cbd5e1 !important;
     }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,

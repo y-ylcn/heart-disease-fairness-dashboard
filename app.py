@@ -21,7 +21,7 @@ from matplotlib.colors import ListedColormap
 # Use the full width of the browser, since the dashboard has several panels side by side
 st.set_page_config(page_title='Fairness Trade-off Dashboard', layout='wide')
  
-# Theme colours and background are set in .streamlit/config.toml; this block only adds the fine details config.toml cannot reach, such as the metric sizing, the card shadows, the heading styling and the tab styling
+# Theme colours and background are set in .streamlit/config.toml; this block only adds the fine details config.toml cannot reach, such as the metric sizing, the card shadows, the heading styling, the tab styling and the expander styling
 st.markdown('''
     <style>
     /* Shrink the large metric numbers to roughly half their default size */
@@ -96,6 +96,31 @@ st.markdown('''
     [data-testid="stTab"] .react-aria-SelectionIndicator,
     [data-testid="stTab"] [class*="SelectionIndicator"] {
         display: none;
+    }
+    /* Give each expander the same white card look as the metrics, with a navy outline so the closed panels read as sections that open */
+    [data-testid="stExpander"] {
+        background-color: #ffffff;
+        border: 1px solid #1f3b6f;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(31, 59, 111, 0.06);
+    }
+    /* Drop the border Streamlit puts on the inner element, so only the outer navy outline shows */
+    [data-testid="stExpander"] details,
+    [data-testid="stExpander"] > div {
+        border: none;
+        background-color: transparent;
+    }
+    /* Set the expander heading in navy, sized between the captions and the panel headings so it reads as a section that opens */
+    [data-testid="stExpander"] summary,
+    [data-testid="stExpander"] summary p {
+        color: #1f3b6f;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    /* Match the arrow to the heading colour, since it sits inside the summary as a separate icon */
+    [data-testid="stExpander"] summary svg {
+        fill: #1f3b6f;
     }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,

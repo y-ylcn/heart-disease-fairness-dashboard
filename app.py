@@ -21,7 +21,7 @@ from matplotlib.colors import ListedColormap
 # Use the full width of the browser, since the dashboard has several panels side by side
 st.set_page_config(page_title='Fairness Trade-off Dashboard', layout='wide')
  
-# Theme colours and background are set in .streamlit/config.toml; this block only adds the fine details config.toml cannot reach, such as the metric sizing, the card shadows, the heading styling, the tab styling and the expander styling
+# Theme colours and background are set in .streamlit/config.toml; this block only adds the fine details config.toml cannot reach, such as the metric sizing, the card shadows, the heading styling, the tab styling, the expander styling and the dropdown styling
 st.markdown('''
     <style>
     /* Shrink the large metric numbers to roughly half their default size */
@@ -112,11 +112,11 @@ st.markdown('''
         border: none;
         background-color: transparent;
     }
-    /* Set the expander heading in navy, sized between the captions and the panel headings so it reads as a section that opens */
+    /* Set the expander heading in navy, one step below the tab labels so the panels read as sections inside the tab rather than beside it */
     [data-testid="stExpander"] summary,
     [data-testid="stExpander"] summary p {
         color: #1f3b6f;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.95rem;
     }
     /* Match the arrow to the heading colour, since it sits inside the summary as a separate icon */

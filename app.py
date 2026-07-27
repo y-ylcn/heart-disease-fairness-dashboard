@@ -500,10 +500,11 @@ with tab_tradeoff:
                'disease rates it disappears altogether. The base rate panel under Data and Analysis gives the size of '
                'that gap. The marker shows where the sliders currently sit.')
  
+    # The feasible region map is only drawn for the threshold methods, since the optimiser sets its own threshold and there is no pair to search
     if optimiser_chosen:
         st.info('The threshold optimiser chooses its own threshold for each sex, so there is no pair for the user to '
-                'set and nothing to search. Select the baseline or one of the two pre-processing mitigations to use '
-                'this panel.')
+                'set and nothing to search. The decision summary below reports how its result sits against the '
+                'tolerance.')
     else:
         demographic, equalised, predictive, impact = threshold_grid(prefix, config['group'], mitigation_name)
         meets = ((demographic <= tolerance) & (equalised <= tolerance) &
@@ -520,6 +521,7 @@ with tab_tradeoff:
         plt.tight_layout()
         _, middle_column, _ = st.columns([1, 2, 1])
         middle_column.pyplot(fig)
+        plt.close(fig)
  
         # Say straight out whether the shaded area exists
         working = int(meets.sum())
@@ -530,32 +532,40 @@ with tab_tradeoff:
             st.error('**No setting meets all four measures at a tolerance of {:.2f}.** Loosening the tolerance or '
                      'accepting a gap on at least one measure is the only way through.'.format(tolerance))
  
-        # Say straight out whether the current slider setting passes, and if it does not, name the measures it fails, so the marker does not have to be read by eye
-        current = compute_metrics(y_true, predictions, group)
-        current_fails = []
-        if current['Demographic Parity Difference'] > tolerance:
-            current_fails.append('Demographic Parity')
-        if current['Equalised Odds Difference'] > tolerance:
-            current_fails.append('Equalised Odds')
-        if current['Predictive Parity Difference'] > tolerance:
-            current_fails.append('Predictive Parity')
-        
-        # An extreme threshold can flag nobody in a group, which leaves the ratio undefined, so an undefined ratio counts as a fail rather than slipping through as a pass
-        di_value = current['Disparate Impact Ratio']
-        if not np.isfinite(di_value) or di_value < 1 - tolerance:
-            current_fails.append('the Disparate Impact Ratio')
+    # Say straight out whether the current result passes, and if it does not, name the measures it fails, so it does not have to be read off the map or the cards
+    # This runs for every method, so the threshold optimiser gets the same decision summary even though it has no pair on the map
+    current = compute_metrics(y_true, predictions, group)
+    current_fails = []
+    if current['Demographic Parity Difference'] > tolerance:
+        current_fails.append('Demographic Parity')
+    if current['Equalised Odds Difference'] > tolerance:
+        current_fails.append('Equalised Odds')
+    if current['Predictive Parity Difference'] > tolerance:
+        current_fails.append('Predictive Parity')
  
-        if len(current_fails) == 0:
+    # An extreme threshold can flag nobody in a group, which leaves the ratio undefined, so an undefined ratio counts as a fail rather than slipping through as a pass
+    di_value = current['Disparate Impact Ratio']
+    if not np.isfinite(di_value) or di_value < 1 - tolerance:
+        current_fails.append('the Disparate Impact Ratio')
+ 
+    # The threshold optimiser sets its own threshold, so its summary drops the slider values that the other methods report
+    if len(current_fails) == 0:
+        if optimiser_chosen:
+            st.success('**Threshold optimiser result: it meets all four measures.**')
+        else:
             st.success('**Current setting: it meets all four measures.** The female threshold is {:.2f} and the male '
                        'threshold is {:.2f}.'.format(female_threshold, male_threshold))
+    else:
+        # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
+        if len(current_fails) == 1:
+            failed_text = current_fails[0]
+        elif len(current_fails) == 2:
+            failed_text = '{} and {}'.format(current_fails[0], current_fails[1])
         else:
-            # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
-            if len(current_fails) == 1:
-                failed_text = current_fails[0]
-            elif len(current_fails) == 2:
-                failed_text = '{} and {}'.format(current_fails[0], current_fails[1])
-            else:
-                failed_text = '{}, and {}'.format(', '.join(current_fails[:-1]), current_fails[-1])
+            failed_text = '{}, and {}'.format(', '.join(current_fails[:-1]), current_fails[-1])
+        if optimiser_chosen:
+            st.warning('**Threshold optimiser result: it does not meet {}.**'.format(failed_text))
+        else:
             st.warning('**Current setting: it does not meet {}.** The female threshold is {:.2f} and the male threshold '
                        'is {:.2f}.'.format(failed_text, female_threshold, male_threshold))
  
@@ -1106,11 +1116,11 @@ with panel_compare:
             ax.set_ylabel(metric_choice)
  
             # Add the fairness reference line, so the bars can be read against the level that counts as fair
-            # A difference metric is fair below the tolerance, while the ratio is fair at 1 with the four-fifths threshold at 0.8
+            # A difference metric is fair below the tolerance, while the ratio is fair above one minus the tolerance, with the four-fifths rule shown as a fixed reference
             if metric_choice in difference_metrics:
                 ax.axhline(tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(tolerance))
             elif metric_choice == 'Disparate Impact Ratio':
-                ax.axhline(1.0, linestyle='--', color='#999999', label='Parity (1.0)')
+                ax.axhline(1 - tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(1 - tolerance))
                 ax.axhline(0.8, linestyle=':', color='#999999', label='Four-fifths (0.8)')
  
             # Put the legend above the plot so it does not sit on top of the bars
@@ -1131,7 +1141,7 @@ with panel_compare:
                 ax.axhline(tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(tolerance))
                 ax.legend(loc='lower center', bbox_to_anchor=(0.5, 1.02), ncol=1)
             elif metric_choice == 'Disparate Impact Ratio':
-                ax.axhline(1.0, linestyle='--', color='#999999', label='Parity (1.0)')
+                ax.axhline(1 - tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(1 - tolerance))
                 ax.axhline(0.8, linestyle=':', color='#999999', label='Four-fifths (0.8)')
                 ax.legend(loc='lower center', bbox_to_anchor=(0.5, 1.02), ncol=2)
             plt.tight_layout()

@@ -498,15 +498,14 @@ with tab_tradeoff:
                  (predictive <= tolerance) & (impact >= 1 - tolerance))
  
         # The shaded cells are the settings that pass, with the female threshold down the rows and the male threshold across
-        fig, ax = plt.subplots(figsize=(4.2, 3.4))
+        fig, ax = plt.subplots(figsize=(5, 4))
         ax.imshow(meets, origin='lower', extent=[0, 1, 0, 1], aspect='auto',
                   cmap=ListedColormap(['#e2e8f0', '#1e6b3a']))
         ax.plot(male_threshold, female_threshold, marker='o', markersize=9, color='#7b241c')
-        ax.set_xlabel('Male Threshold')
-        ax.set_ylabel('Female Threshold')
+        ax.set_xlabel('Male Threshold', fontsize=9)
+        ax.set_ylabel('Female Threshold', fontsize=9)
+        ax.tick_params(labelsize=8)
         plt.tight_layout()
-        _, middle_column, _ = st.columns([1, 2, 1])
-        middle_column.pyplot(fig)
  
         # Say straight out whether the bar can be met, and if it cannot, which measure is holding it back
         working = int(meets.sum())

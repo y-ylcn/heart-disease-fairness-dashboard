@@ -139,6 +139,14 @@ st.markdown('''
     [data-testid="stSelectbox"] div[data-baseweb="select"] span {
         font-size: 0.90rem !important;
     }
+    /* Set the options in the open dropdown list to the same size, since the list opens in a separate layer that the rule above does not reach */
+    div[data-baseweb="popover"] li,
+    div[data-baseweb="popover"] li div,
+    div[data-baseweb="popover"] li span,
+    ul[role="listbox"] li,
+    div[role="listbox"] li {
+        font-size: 0.90rem !important;
+    }
     /* Set the text in the coloured status boxes below the caption size, so the green, red, amber and blue messages do not sit larger than the panel text around them */
     [data-testid="stAlert"] p,
     [data-testid="stAlert"] div {

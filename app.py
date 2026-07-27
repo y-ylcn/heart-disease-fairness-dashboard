@@ -529,7 +529,7 @@ with tab_tradeoff:
                        'the map, and the marker shows where the current sliders sit.'.format(tolerance))
         else:
             st.error('**No setting meets all four measures at a tolerance of {:.2f}.** Loosening the tolerance or '
-                     'accepting a gap on one measure is the only way through.'.format(tolerance))
+                     'accepting a gap on at least one measure is the only way through.'.format(tolerance))
  
         # Say straight out whether the current slider setting passes, and if it does not, name the measures it fails, so the marker does not have to be read by eye
         current = compute_metrics(y_true, predictions, group)

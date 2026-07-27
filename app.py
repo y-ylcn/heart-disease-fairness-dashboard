@@ -148,7 +148,13 @@ st.markdown('''
     [data-testid="stMarkdownContainer"] p {
         font-size: 0.95rem;
     }
-    /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
+    /* Set the control panel heading to the same size as the panel headings on the main page, so the sidebar reads as a section of equal weight */
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3 {
+        font-size: 1.4rem !important;
+    }
+    /* Keep the control labels a balanced step below that heading, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] span {
@@ -492,7 +498,7 @@ with tab_tradeoff:
                  (predictive <= tolerance) & (impact >= 1 - tolerance))
  
         # The shaded cells are the settings that pass, with the female threshold down the rows and the male threshold across
-        fig, ax = plt.subplots(figsize=(5, 4))
+        fig, ax = plt.subplots(figsize=(4.2, 3.4))
         ax.imshow(meets, origin='lower', extent=[0, 1, 0, 1], aspect='auto',
                   cmap=ListedColormap(['#e2e8f0', '#1e6b3a']))
         ax.plot(male_threshold, female_threshold, marker='o', markersize=9, color='#7b241c')

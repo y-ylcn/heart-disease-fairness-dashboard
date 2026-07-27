@@ -514,7 +514,7 @@ with tab_tradeoff:
         fig, ax = plt.subplots(figsize=(5, 4))
         ax.imshow(meets, origin='lower', extent=[0, 1, 0, 1], aspect='auto',
                   cmap=ListedColormap(['#e2e8f0', '#1e6b3a']))
-        ax.plot(male_threshold, female_threshold, marker='o', markersize=9, color='#7b241c')
+        ax.plot(male_threshold, female_threshold, marker='o', markersize=6, color='#7b241c')
         ax.set_xlabel('Male Threshold', fontsize=9)
         ax.set_ylabel('Female Threshold', fontsize=9)
         ax.tick_params(labelsize=8)

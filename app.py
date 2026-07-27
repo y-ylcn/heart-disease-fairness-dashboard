@@ -543,18 +543,17 @@ with tab_tradeoff:
         if current['Disparate Impact Ratio'] < 1 - tolerance:
             current_fails.append('the Disparate Impact Ratio')
  
-        # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
-        if len(current_fails) == 1:
-            failed_text = current_fails[0]
-        elif len(current_fails) == 2:
-            failed_text = '{} and {}'.format(current_fails[0], current_fails[1])
-        else:
-            failed_text = '{}, and {}'.format(', '.join(current_fails[:-1]), current_fails[-1])
- 
         if len(current_fails) == 0:
             st.success('**Current setting: it meets all four measures.** The female threshold is {:.2f} and the male '
                        'threshold is {:.2f}.'.format(female_threshold, male_threshold))
         else:
+            # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
+            if len(current_fails) == 1:
+                failed_text = current_fails[0]
+            elif len(current_fails) == 2:
+                failed_text = '{} and {}'.format(current_fails[0], current_fails[1])
+            else:
+                failed_text = '{}, and {}'.format(', '.join(current_fails[:-1]), current_fails[-1])
             st.warning('**Current setting: it does not meet {}.** The female threshold is {:.2f} and the male threshold '
                        'is {:.2f}.'.format(failed_text, female_threshold, male_threshold))
  

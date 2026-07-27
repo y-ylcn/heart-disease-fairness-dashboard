@@ -158,7 +158,7 @@ st.markdown('''
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] span {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     </style>
     ''', unsafe_allow_html=True)
@@ -506,6 +506,8 @@ with tab_tradeoff:
         ax.set_ylabel('Female Threshold', fontsize=9)
         ax.tick_params(labelsize=8)
         plt.tight_layout()
+        _, middle_column, _ = st.columns([1, 2, 1])
+        middle_column.pyplot(fig)
  
         # Say straight out whether the bar can be met, and if it cannot, which measure is holding it back
         working = int(meets.sum())

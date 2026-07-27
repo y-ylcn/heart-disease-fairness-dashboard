@@ -528,10 +528,10 @@ with tab_tradeoff:
             st.success('**Some settings meet all four measures at a tolerance of {:.2f}.** They are the shaded area on '
                        'the map, and the marker shows where the current sliders sit.'.format(tolerance))
         else:
-            passes = {'demographic parity': int((demographic <= tolerance).sum()),
-                      'equalised odds': int((equalised <= tolerance).sum()),
-                      'predictive parity': int((predictive <= tolerance).sum()),
-                      'the disparate impact ratio': int((impact >= 1 - tolerance).sum())}
+            passes = {'Demographic Parity': int((demographic <= tolerance).sum()),
+                      'Equalised Odds': int((equalised <= tolerance).sum()),
+                      'Predictive Parity': int((predictive <= tolerance).sum()),
+                      'the Disparate Impact Ratio': int((impact >= 1 - tolerance).sum())}
             blocking = min(passes, key=passes.get)
             st.error('**No setting meets all four measures at a tolerance of {:.2f}.** The measure holding it back is '
                      '{}. Loosening the tolerance or accepting a gap on one measure is the only way '
@@ -541,19 +541,28 @@ with tab_tradeoff:
         current = compute_metrics(y_true, predictions, group)
         current_fails = []
         if current['Demographic Parity Difference'] > tolerance:
-            current_fails.append('demographic parity')
+            current_fails.append('Demographic Parity')
         if current['Equalised Odds Difference'] > tolerance:
-            current_fails.append('equalised odds')
+            current_fails.append('Equalised Odds')
         if current['Predictive Parity Difference'] > tolerance:
-            current_fails.append('predictive parity')
+            current_fails.append('Predictive Parity')
         if current['Disparate Impact Ratio'] < 1 - tolerance:
-            current_fails.append('the disparate impact ratio')
+            current_fails.append('the Disparate Impact Ratio')
+ 
+        # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
+        if len(current_fails) == 1:
+            failed_text = current_fails[0]
+        elif len(current_fails) == 2:
+            failed_text = '{} and {}'.format(current_fails[0], current_fails[1])
+        else:
+            failed_text = '{}, and {}'.format(', '.join(current_fails[:-1]), current_fails[-1])
+ 
         if len(current_fails) == 0:
-            st.success('**Current setting: passes all four measures.** The female threshold is {:.2f} and the male '
+            st.success('**Current setting: it meets all four measures.** The female threshold is {:.2f} and the male '
                        'threshold is {:.2f}.'.format(female_threshold, male_threshold))
         else:
-            st.warning('**Current setting: fails {}.** The female threshold is {:.2f} and the male threshold is '
-                       '{:.2f}.'.format(' and '.join(current_fails), female_threshold, male_threshold))
+            st.warning('**Current setting: it does not meet {}.** The female threshold is {:.2f} and the male threshold '
+                       'is {:.2f}.'.format(failed_text, female_threshold, male_threshold))
  
     st.divider()
  
@@ -623,7 +632,7 @@ with tab_tradeoff:
         column.info(plain_meaning[name])
  
     # The first and last measures are built from the same two rates, so only three of the four carry separate information
-    st.caption('Demographic parity difference and the disparate impact ratio are two views of the same comparison. '
+    st.caption('Demographic Parity Difference and the Disparate Impact Ratio are two views of the same comparison. '
                'One subtracts the two flagging rates, the other divides them, so only three of the four measures are '
                'independent.')
  
@@ -641,8 +650,8 @@ with tab_tradeoff:
     # Predictive parity and equalised odds are read straight off these values, so they belong under the metrics rather than beside them
     # Keeping them in a drill-down leaves the panel above uncluttered while the working stays available
     with st.expander('Where these numbers come from: performance by {}'.format(group_label.lower())):
-        st.caption('Two of the measures above are read straight off the values below. Predictive parity is the gap '
-                   'between female and male precision, and equalised odds is the larger of the recall gap and the '
+        st.caption('Two of the measures above are read straight off the values below. Predictive Parity is the gap '
+                   'between female and male precision, and Equalised Odds is the larger of the recall gap and the '
                    'false positive rate gap. Recall, also called the true positive rate, is the proportion of real '
                    'disease cases the model correctly flags. The false negative rate is the proportion of real disease '
                    'cases the model misses, and this is where under-diagnosis shows up, which matters most in a clinical '
@@ -985,7 +994,7 @@ with panel_quality:
                'close together the model ranks both groups equally well. The fairness gap then comes from where the '
                'shared threshold falls rather than from the model itself, which points towards adjusting the '
                'threshold for each group. ROC is not one of the five fairness criteria. It is here to show where the '
-               'equalised odds gap comes from.')
+               'Equalised Odds gap comes from.')
     if optimiser_chosen:
         st.info('An ROC curve ranks patients by their score, and the threshold optimiser does not produce one, so '
                 'there is nothing to plot here either. The same two mitigations that restore the calibration curve '

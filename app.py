@@ -26,7 +26,7 @@ st.markdown('''
     <style>
     /* Shrink the large metric numbers to roughly half their default size */
     [data-testid="stMetricValue"] {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     /* Keep the metric label readable alongside the smaller value */
     [data-testid="stMetricLabel"] {
@@ -34,7 +34,7 @@ st.markdown('''
     }
     /* Set the caption text to a clear, readable size for the panel explanations */
     [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {
-        font-size: 0.95rem;
+        font-size: 0.90rem;
     }
     /* Give each metric a white card look with a soft border and shadow, so the boxes lift off the grey background */
     [data-testid="stMetric"] {
@@ -47,12 +47,14 @@ st.markdown('''
     /* Style the page title in navy with a thin underline, so it reads as a clear branded header */
     h1 {
         color: #1f3b6f !important;
+        font-size: 2.0rem !important;
         border-bottom: 2px solid #e2e8f0;
         padding-bottom: 0.4rem;
     }
     /* Mark each panel heading in navy with a short left bar, with a balanced gap to the text and room below so the caption underneath is not cramped */
     h2, h3 {
         color: #1f3b6f !important;
+        font-size: 1.4rem !important;
         border-left: 4px solid #1f3b6f;
         padding-left: 0.5rem !important;
         margin-left: 0;

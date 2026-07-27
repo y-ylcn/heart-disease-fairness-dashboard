@@ -195,15 +195,16 @@ CALIBRATION_SUFFIX = {'Baseline': 'baseline', 'SMOTE-NC': 'smote', 'Reweighting'
 # The plain-language meaning of each fairness metric, shown as a help tooltip next to it on the fairness metrics panel
 METRIC_HELP = {
     'Demographic Parity Difference': 'Whether the model flags disease at the same rate for both sexes. It measures the '
-                                     'gap between the share of female patients and the share of male patients predicted '
-                                     'to have disease, so a value of 0 means both groups are flagged equally often.',
+                                     'gap between the proportion of female patients and the proportion of male patients '
+                                     'predicted to have disease, so a value of 0 means both groups are flagged equally '
+                                     'often.',
     'Equalised Odds Difference': 'Whether the model is equally accurate for both sexes, looking separately at the '
                                  'patients who truly have disease and those who do not. It takes the larger of two '
                                  'gaps, the gap in the true positive rate and the gap in the false positive rate, so a '
                                  'value of 0 means the model makes the same kinds of error for each group.',
     'Predictive Parity Difference': 'Whether a positive prediction can be trusted equally for both sexes. It is the gap '
-                                    'in precision between the groups, precision being the share of flagged patients who '
-                                    'truly have disease, so a value of 0 means a \'disease\' flag carries the same '
+                                    'in precision between the groups, precision being the proportion of flagged patients '
+                                    'who truly have disease, so a value of 0 means a \'disease\' flag carries the same '
                                     'weight for a female and a male patient.',
     'Disparate Impact Ratio': 'The ratio between the lower and the higher of the two groups\' positive-prediction '
                               'rates, so it runs from 0 to 1. A ratio of 1 means both groups are flagged equally often. '
@@ -212,15 +213,16 @@ METRIC_HELP = {
  
 # The plain-language meaning of each performance measure, shown as a help tooltip next to it on the performance panel
 PERF_HELP = {
-    'Recall': 'The share of patients who truly have disease that the model correctly flags, so a higher value is '
-              'better here. It is also known as the true positive rate, or sensitivity.',
-    'Precision': 'Among the patients flagged as having disease, the share who truly have it, so a higher value is the '
-                 'better outcome.',
-    'False Negative Rate': 'The share of patients who truly have disease but are predicted healthy. These are missed '
-                           'cases, and since a missed case is usually more serious than a false alarm in a clinical '
-                           'setting, a lower value is preferable.',
-    'False Positive Rate': 'The share of healthy patients wrongly flagged as having disease. These are false alarms, '
-                           'which lead to unnecessary tests, so a lower value is preferable here.'}
+    'Recall': 'Among the patients who truly have disease, the proportion the model correctly flags. A higher value is '
+              'better, since it means fewer real cases are missed. It is also known as the true positive rate, or '
+              'sensitivity.',
+    'Precision': 'Among the patients the model flags as having disease, the proportion who truly have disease. A higher '
+                 'value is better, since it means a flag is more often correct.',
+    'False Negative Rate': 'Among the patients who truly have disease, the proportion the model predicts healthy. These '
+                           'are missed cases, and since a missed case is usually more serious than a false alarm in a '
+                           'clinical setting, a lower value is preferable.',
+    'False Positive Rate': 'Among the healthy patients, the proportion the model wrongly flags as having disease. These '
+                           'are false alarms, which lead to unnecessary tests, so a lower value is preferable.'}
  
 # The description of every feature the model uses, shown as a table on the overview tab so each column can be understood
 FEATURE_INFO = {

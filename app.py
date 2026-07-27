@@ -136,13 +136,13 @@ st.markdown('''
     }
     /* Set the body paragraphs a touch smaller, so the task description under the title reads as supporting text rather than competing with the headings */
     [data-testid="stMarkdownContainer"] p {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
     }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] span {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
     }
     </style>
     ''', unsafe_allow_html=True)

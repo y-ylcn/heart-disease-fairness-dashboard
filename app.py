@@ -395,7 +395,7 @@ st.write('This dashboard is for the person who trains a clinical prediction mode
          'the two patient groups is acceptable, and the dashboard shows whether any combination of the two decision '
          'thresholds meets those constraints. If no combination does, it shows which measure is blocking it. The two '
          'heart disease datasets are worked examples, and the same approach applies to any binary clinical prediction '
-         'task with a protected attribute.')
+         'task with a sensitive attribute.')
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
          'underlying disease rates, no setting satisfies every fairness measure at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '
@@ -417,7 +417,7 @@ with st.sidebar:
  
     # Keep the baseline separate from the mitigations, since it is the untouched model that the mitigations are compared against
     use_mitigation = st.radio('Model', ['Baseline', 'Apply a mitigation'],
-                              help='The baseline is the tuned XGBoost model before any fairness mitigation is applied. A mitigation is a method that tries to make it fairer.')
+                              help='The baseline is the tuned XGBoost model before any bias mitigation is applied. A mitigation is a method that tries to make it fairer.')
     if use_mitigation == 'Apply a mitigation':
         mitigation_name = st.radio('Mitigation Method', mitigation_methods,
                                    help='SMOTE-NC adds synthetic minority-class patients and reweighting changes the '
@@ -460,7 +460,7 @@ probabilities, base_rate = load_data(prefix)
 group = probabilities[config['group']].values
 y_true = probabilities['y_true'].values
  
-# The word for the protected attribute differs by dataset, so it is set once here and reused in the headings and notes below
+# The word for the sensitive attribute differs by dataset, so it is set once here and reused in the headings and notes below
 # UCI records it as sex, while the Kaggle data records it as gender, matching each notebook
 group_label = 'Sex' if prefix == 'uci' else 'Gender'
  
@@ -522,11 +522,11 @@ with tab_tradeoff:
         _, middle_column, _ = st.columns([1, 2, 1])
         middle_column.pyplot(fig)
  
-        # Say straight out whether the bar can be met, and if it cannot, which measure is holding it back
+        # Say straight out whether the shaded area exists, and if it does not, which measure is holding it back
         working = int(meets.sum())
         if working > 0:
-            st.success('**{} of the {} settings meet all four measures at a tolerance of {:.2f}.** The marker shows '
-                       'whether the current sliders are among them.'.format(working, meets.size, tolerance))
+            st.success('**Some settings meet all four measures at a tolerance of {:.2f}.** They are the shaded area on '
+                       'the map, and the marker shows where the current sliders sit.'.format(tolerance))
         else:
             passes = {'demographic parity': int((demographic <= tolerance).sum()),
                       'equalised odds': int((equalised <= tolerance).sum()),
@@ -534,9 +534,26 @@ with tab_tradeoff:
                       'the disparate impact ratio': int((impact >= 1 - tolerance).sum())}
             blocking = min(passes, key=passes.get)
             st.error('**No setting meets all four measures at a tolerance of {:.2f}.** The measure holding it back is '
-                     '{}, which only {} of the {} settings satisfy on its own. Loosening the tolerance or accepting a '
-                     'gap on one measure is the only way through.'.format(tolerance, blocking, passes[blocking],
-                                                                          meets.size))
+                     '{}. Loosening the tolerance or accepting a gap on one measure is the only way '
+                     'through.'.format(tolerance, blocking))
+ 
+        # Say straight out whether the current slider setting passes, and if it does not, name the measures it fails, so the marker does not have to be read by eye
+        current = compute_metrics(y_true, predictions, group)
+        current_fails = []
+        if current['Demographic Parity Difference'] > tolerance:
+            current_fails.append('demographic parity')
+        if current['Equalised Odds Difference'] > tolerance:
+            current_fails.append('equalised odds')
+        if current['Predictive Parity Difference'] > tolerance:
+            current_fails.append('predictive parity')
+        if current['Disparate Impact Ratio'] < 1 - tolerance:
+            current_fails.append('the disparate impact ratio')
+        if len(current_fails) == 0:
+            st.success('**Current setting: passes all four measures.** The female threshold is {:.2f} and the male '
+                       'threshold is {:.2f}.'.format(female_threshold, male_threshold))
+        else:
+            st.warning('**Current setting: fails {}.** The female threshold is {:.2f} and the male threshold is '
+                       '{:.2f}.'.format(' and '.join(current_fails), female_threshold, male_threshold))
  
     st.divider()
  

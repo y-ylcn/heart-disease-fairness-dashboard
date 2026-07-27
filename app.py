@@ -24,9 +24,12 @@ st.set_page_config(page_title='Fairness Trade-off Dashboard', layout='wide')
 # Theme colours and background are set in .streamlit/config.toml; this block only adds the fine details config.toml cannot reach, such as the metric sizing, the card shadows, the heading styling, the tab styling, the expander styling and the dropdown styling
 st.markdown('''
     <style>
-    /* Shrink the large metric numbers to roughly half their default size */
-    [data-testid="stMetricValue"] {
-        font-size: 1.2rem;
+    /* Shrink the large metric numbers to roughly half their default size, and keep them bold so the values stand out from the labels and captions around them */
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricValue"] div,
+    [data-testid="stMetricValue"] p {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
     }
     /* Keep the metric label readable alongside the smaller value */
     [data-testid="stMetricLabel"] {
@@ -130,9 +133,16 @@ st.markdown('''
     [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
         border: 1px solid #cbd5e1 !important;
     }
-    /* Set the text in the coloured status boxes to the caption size, so the green, red, amber and blue messages do not sit larger than the panel text around them */
-    [data-testid="stAlert"] p {
-        font-size: 0.90rem;
+    /* Set the selected text inside the dropdowns to the body size, so the filter boxes on the main tabs do not sit larger than the text around them */
+    [data-testid="stSelectbox"] div[data-baseweb="select"],
+    [data-testid="stSelectbox"] div[data-baseweb="select"] div,
+    [data-testid="stSelectbox"] div[data-baseweb="select"] span {
+        font-size: 0.90rem !important;
+    }
+    /* Set the text in the coloured status boxes below the caption size, so the green, red, amber and blue messages do not sit larger than the panel text around them */
+    [data-testid="stAlert"] p,
+    [data-testid="stAlert"] div {
+        font-size: 0.90rem !important;
     }
     /* Set the body paragraphs a touch smaller, so the task description under the title reads as supporting text rather than competing with the headings */
     [data-testid="stMarkdownContainer"] p {

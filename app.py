@@ -393,9 +393,8 @@ st.title('Fairness Trade-off Dashboard')
 st.write('This dashboard is for the person who trains a clinical prediction model and has to decide whether its '
          'behaviour is acceptable before handing it to a clinician. The user sets how large a difference between '
          'the two patient groups is acceptable, and the dashboard shows whether any combination of the two decision '
-         'thresholds meets those constraints. If no combination does, it shows which measure is blocking it. The two '
-         'heart disease datasets are worked examples, and the same approach applies to any binary clinical prediction '
-         'task with a sensitive attribute.')
+         'thresholds meets those constraints. The two heart disease datasets are worked examples, and the same '
+         'approach applies to any binary clinical prediction task with a sensitive attribute.')
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
          'underlying disease rates, no setting satisfies every fairness measure at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '
@@ -540,7 +539,10 @@ with tab_tradeoff:
             current_fails.append('Equalised Odds')
         if current['Predictive Parity Difference'] > tolerance:
             current_fails.append('Predictive Parity')
-        if current['Disparate Impact Ratio'] < 1 - tolerance:
+        
+        # An extreme threshold can flag nobody in a group, which leaves the ratio undefined, so an undefined ratio counts as a fail rather than slipping through as a pass
+        di_value = current['Disparate Impact Ratio']
+        if not np.isfinite(di_value) or di_value < 1 - tolerance:
             current_fails.append('the Disparate Impact Ratio')
  
         if len(current_fails) == 0:
@@ -886,10 +888,11 @@ with panel_explain:
     # The SHAP explanations were worked out for the baseline model only, so this tab shows a note when a mitigation is chosen
     if mitigation_name != 'Baseline':
         st.info('The explanations on this tab are worked out for the baseline model only, so they appear once the '
-                'baseline is selected in the control panel. The SHAP values were saved for the baseline model, since that is '
-                'the one being audited, and the mitigations change the decisions rather than the explanation behind '
-                'them. Select the baseline to view the explanations. To compare the mitigation methods, use the '
-                'Fairness Metrics and Errors tabs, or Calibration & ROC and Dataset and Metric Comparison under '
+                'baseline is selected in the control panel. The SHAP values were saved for the baseline model, since that '
+                'is the one being audited. SMOTE-NC and reweighting retrain the model, so their explanations would need '
+                'their own SHAP values, while the threshold optimiser leaves the model untouched and changes only the '
+                'decision threshold. Select the baseline to view the explanations. To compare the mitigation methods, use '
+                'the Fairness Metrics and Errors tabs, or Calibration & ROC and Dataset and Metric Comparison under '
                 'Data and Analysis.')
     else:
  

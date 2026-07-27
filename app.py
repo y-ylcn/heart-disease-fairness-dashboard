@@ -417,7 +417,8 @@ with st.sidebar:
                               help='The baseline is the tuned XGBoost model before any fairness mitigation is applied. A mitigation is a method that tries to make it fairer.')
     if use_mitigation == 'Apply a mitigation':
         mitigation_name = st.radio('Mitigation Method', mitigation_methods,
-                                   help='SMOTE-NC and reweighting alter the training data and retrain the model, which '
+                                   help='SMOTE-NC adds synthetic minority-class patients and reweighting changes the '
+                                        'weight each patient carries in training, and both retrain the model, which '
                                         'changes the probability scores. The threshold optimiser leaves the model '
                                         'untouched and simply picks a separate threshold for each sex, so the scores '
                                         'themselves stay the same.')

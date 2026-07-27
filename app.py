@@ -570,18 +570,19 @@ with tab_tradeoff:
             'having disease. Out of every 100 male patients, **{:.0f}** are flagged.'.format(female_flagged, male_flagged),
         'Equalised Odds Difference':
             '**Does the model make the same kinds of mistake for both groups?** Among patients who truly have '
-            'disease, it catches **{:.0f}** in every 100 women and **{:.0f}** in every 100 men. Among healthy '
-            'patients, it wrongly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 '
+            'disease, the model correctly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 men. Among '
+            'healthy patients, the model wrongly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 '
             'men.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
         'Predictive Parity Difference':
             '**Can a positive flag be trusted equally for both groups?** When a female patient is flagged, the flag '
             'is correct **{:.0f}** times in every 100. When a male patient is flagged, **{:.0f}** times in every '
             '100.'.format(female_correct_flag, male_correct_flag),
         'Disparate Impact Ratio':
-            '**Are the two flagging rates in proportion?** This compares the two groups\' flagging rates as a ratio. '
-            'Scaled so the group flagged more often sits at 100, the other group sits at **{:.0f}** on the same scale. '
-            'A value of 100 would mean both groups are flagged at the same rate.'.format((min(female_flagged, male_flagged) / max(female_flagged, male_flagged) * 100)
-                                                if max(female_flagged, male_flagged) > 0 else 0)}
+            '**Are the two groups flagged in similar proportion?** The group flagged less often is flagged at **{:.0f}** '
+            'percent of the rate of the group flagged more often. A value of 100 percent would mean the two groups are '
+            'flagged equally often, and the further below 100 it falls, the wider the gap between '
+            'them.'.format((min(female_flagged, male_flagged) / max(female_flagged, male_flagged) * 100)
+                          if max(female_flagged, male_flagged) > 0 else 0)}
  
     # Two metrics to a row rather than four, so each note has half the width instead of a quarter
     columns_row_one = st.columns(2)
@@ -626,8 +627,8 @@ with tab_tradeoff:
         st.caption('Two of the measures above are read straight off the values below. Predictive parity is the gap '
                    'between female and male precision, and equalised odds is the larger of the recall gap and the '
                    'false positive rate gap. Recall, also called the true positive rate, is the proportion of real '
-                   'disease cases the model catches. The false negative rate is the proportion of real disease cases '
-                   'the model misses, and this is where under-diagnosis shows up, which matters most in a clinical '
+                   'disease cases the model correctly flags. The false negative rate is the proportion of real disease '
+                   'cases the model misses, and this is where under-diagnosis shows up, which matters most in a clinical '
                    'setting. The false positive rate is the proportion of healthy patients flagged in error.')
         female_recall, female_precision, male_recall, male_precision = st.columns(4)
         female_recall.metric('Female Recall', '{:.4f}'.format(by_group['Recall'].values[0]), help=PERF_HELP['Recall'])
@@ -1033,7 +1034,7 @@ with panel_compare:
                       'Predictive Parity Difference': 'A lower value is better here, since a difference close to 0 means the two groups are treated more equally.',
                       'Disparate Impact Ratio': 'A ratio closer to 1 is better, and a value below 0.8 is the common threshold for concern.',
                       'Accuracy': 'A higher value is better, since this measures how often the model is correct overall.',
-                      'Recall': 'A higher value is better, since this measures how many true disease cases the model catches.'}
+                      'Recall': 'A higher value is better, since this measures how many true disease cases the model correctly flags.'}
  
     # Work out every method's metrics for both datasets at the current thresholds, so the panels below read from live results
     uci_results = {}

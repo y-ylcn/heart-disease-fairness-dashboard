@@ -522,20 +522,14 @@ with tab_tradeoff:
         _, middle_column, _ = st.columns([1, 2, 1])
         middle_column.pyplot(fig)
  
-        # Say straight out whether the shaded area exists, and if it does not, which measure is holding it back
+        # Say straight out whether the shaded area exists
         working = int(meets.sum())
         if working > 0:
             st.success('**Some settings meet all four measures at a tolerance of {:.2f}.** They are the shaded area on '
                        'the map, and the marker shows where the current sliders sit.'.format(tolerance))
         else:
-            passes = {'Demographic Parity': int((demographic <= tolerance).sum()),
-                      'Equalised Odds': int((equalised <= tolerance).sum()),
-                      'Predictive Parity': int((predictive <= tolerance).sum()),
-                      'the Disparate Impact Ratio': int((impact >= 1 - tolerance).sum())}
-            blocking = min(passes, key=passes.get)
-            st.error('**No setting meets all four measures at a tolerance of {:.2f}.** The measure holding it back is '
-                     '{}. Loosening the tolerance or accepting a gap on one measure is the only way '
-                     'through.'.format(tolerance, blocking))
+            st.error('**No setting meets all four measures at a tolerance of {:.2f}.** Loosening the tolerance or '
+                     'accepting a gap on one measure is the only way through.'.format(tolerance))
  
         # Say straight out whether the current slider setting passes, and if it does not, name the measures it fails, so the marker does not have to be read by eye
         current = compute_metrics(y_true, predictions, group)
@@ -571,8 +565,8 @@ with tab_tradeoff:
     # Work out the four metrics from the current predictions and show each one with a pass or fail tag
     metrics = compute_metrics(y_true, predictions, group)
     st.subheader('Fairness Metrics')
-    st.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The disparate '
-               'impact ratio compares the groups as a ratio, so it reads as fair when close to 1. Each turns green '
+    sst.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
+               'Impact Ratio compares the groups as a ratio, so it reads as fair when close to 1. Each turns green '
                'when it sits within the tolerance set in the control panel. The technical definition is on the '
                'question mark, and the note under each value gives the same measure as a count of patients.')
  

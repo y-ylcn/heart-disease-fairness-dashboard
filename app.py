@@ -565,7 +565,7 @@ with tab_tradeoff:
     # Work out the four metrics from the current predictions and show each one with a pass or fail tag
     metrics = compute_metrics(y_true, predictions, group)
     st.subheader('Fairness Metrics')
-    sst.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
+    st.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
                'Impact Ratio compares the groups as a ratio, so it reads as fair when close to 1. Each turns green '
                'when it sits within the tolerance set in the control panel. The technical definition is on the '
                'question mark, and the note under each value gives the same measure as a count of patients.')

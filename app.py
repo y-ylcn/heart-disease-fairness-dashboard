@@ -198,16 +198,17 @@ METRIC_HELP = {
                                      'gap between the share of female patients and the share of male patients predicted '
                                      'to have disease, so a value of 0 means both groups are flagged equally often.',
     'Equalised Odds Difference': 'Whether the model is equally accurate for both sexes, looking separately at the '
-                                 'patients who truly have disease and those who do not. It brings together the gap in '
-                                 'the true positive rate and the gap in the false positive rate, so a value of 0 means '
-                                 'the model makes the same kinds of error for each group.',
+                                 'patients who truly have disease and those who do not. It takes the larger of two '
+                                 'gaps, the gap in the true positive rate and the gap in the false positive rate, so a '
+                                 'value of 0 means the model makes the same kinds of error for each group.',
     'Predictive Parity Difference': 'Whether a positive prediction can be trusted equally for both sexes. It is the gap '
                                     'in precision between the groups, precision being the share of flagged patients who '
                                     'truly have disease, so a value of 0 means a \'disease\' flag carries the same '
                                     'weight for a female and a male patient.',
-    'Disparate Impact Ratio': 'The ratio of the two groups\' positive-prediction rates. A ratio of 1 means both groups '
-                              'are flagged equally often. The 0.8 line (the four-fifths rule) is shown in the '
-                              'comparison view as a common reference point.'}
+    'Disparate Impact Ratio': 'The ratio between the lower and the higher of the two groups\' positive-prediction '
+                              'rates, so it runs from 0 to 1. A ratio of 1 means both groups are flagged equally often. '
+                              'The 0.8 line (the four-fifths rule) is shown in the comparison view as a common '
+                              'reference point.'}
  
 # The plain-language meaning of each performance measure, shown as a help tooltip next to it on the performance panel
 PERF_HELP = {

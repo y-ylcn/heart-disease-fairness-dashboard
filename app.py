@@ -625,10 +625,10 @@ with tab_tradeoff:
     with st.expander('Where these numbers come from: performance by {}'.format(group_label.lower())):
         st.caption('Two of the measures above are read straight off the values below. Predictive parity is the gap '
                    'between female and male precision, and equalised odds is the larger of the recall gap and the '
-                   'false positive rate gap. Recall, also called the true positive rate, is the share of real disease '
-                   'cases the model catches. The false negative rate is the share it misses, and this is where '
-                   'under-diagnosis shows up, which matters most in a clinical setting. The false positive rate is '
-                   'the share of healthy patients flagged in error.')
+                   'false positive rate gap. Recall, also called the true positive rate, is the proportion of real '
+                   'disease cases the model catches. The false negative rate is the proportion of real disease cases '
+                   'the model misses, and this is where under-diagnosis shows up, which matters most in a clinical '
+                   'setting. The false positive rate is the proportion of healthy patients flagged in error.')
         female_recall, female_precision, male_recall, male_precision = st.columns(4)
         female_recall.metric('Female Recall', '{:.4f}'.format(by_group['Recall'].values[0]), help=PERF_HELP['Recall'])
         female_precision.metric('Female Precision', '{:.4f}'.format(by_group['Precision'].values[0]), help=PERF_HELP['Precision'])
@@ -845,7 +845,7 @@ with panel_overview:
  
     # The gap between the two disease rates is the reason the fairness measures pull against each other, so it belongs with the description of the data
     st.subheader('Disease Rate by {} (Base Rate)'.format(group_label))
-    st.caption('The share of female and male patients who actually have heart disease, known as the base rate. This is '
+    st.caption('The proportion of female and male patients who actually have heart disease, known as the base rate. This is '
                'measured across the full dataset before the train and test split, so it describes the data as a whole '
                'rather than the test set the other panels work on. The wider this gap, the harder it becomes to satisfy '
                'the fairness measures at the same time, which is what the Fairness Metrics tab reports. A large gap on '

@@ -130,6 +130,10 @@ st.markdown('''
     [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
         border: 1px solid #cbd5e1 !important;
     }
+    /* Set the text in the coloured status boxes to the caption size, so the green, red, amber and blue messages do not sit larger than the panel text around them */
+    [data-testid="stAlert"] p {
+        font-size: 0.90rem;
+    }
     /* Keep the control panel text at a steady size, so the controls read the same across Streamlit versions rather than shrinking on the deployed one */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] p,

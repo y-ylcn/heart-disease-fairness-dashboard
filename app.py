@@ -393,9 +393,9 @@ st.title('Fairness Trade-off Dashboard')
 st.write('This dashboard is for the person who trains a clinical prediction model and has to decide whether its '
          'behaviour is acceptable before handing it to a clinician. The user sets how large a difference between '
          'the two patient groups is acceptable, and the dashboard shows whether any combination of the two decision '
-         'thresholds meets that bar. If no combination does, it shows which measure is blocking it. The two heart '
-         'disease datasets are worked examples, and the same approach applies to any binary clinical prediction task '
-         'with a protected attribute.')
+         'thresholds meets those constraints. If no combination does, it shows which measure is blocking it. The two '
+         'heart disease datasets are worked examples, and the same approach applies to any binary clinical prediction '
+         'task with a protected attribute.')
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
          'underlying disease rates, no setting satisfies every fairness measure at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '

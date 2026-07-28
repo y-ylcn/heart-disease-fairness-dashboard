@@ -333,7 +333,7 @@ def icon_array(highlighted, highlight_colour, base_colour):
         squares.append('<div style="width:12px;height:12px;background:{};border-radius:2px;"></div>'.format(colour))
     return '<div style="display:grid;grid-template-columns:repeat(10,12px);gap:3px;">{}</div>'.format(''.join(squares))
  
-# Work out the four fairness measures at every pair of thresholds, so the panel can search rather than leaving the user to hunt
+# Calculate the four fairness measures at every pair of thresholds, so the panel can search rather than leaving the user to hunt
 # The measures do not depend on the tolerance, so the grid is cached once and only the comparison is redone when the slider moves
 @st.cache_data
 def threshold_grid(prefix, group_column, method, step=0.01):
@@ -410,7 +410,7 @@ with st.sidebar:
     dataset_name = st.selectbox('Dataset', list(DATASETS.keys()),
                                 help='Choose which dataset to explore. Every panel updates to reflect the one selected here.')
  
-    # Work out the prefix now, since the panels below load their data by it
+    # Set the prefix now, since the panels below load their data by it
     config = DATASETS[dataset_name]
     prefix = config['prefix']
  
@@ -573,7 +573,7 @@ with tab_tradeoff:
  
     # 6. Fairness metrics panel
  
-    # Work out the four metrics from the current predictions and show each one with a pass or fail tag
+    # Calculate the four metrics from the current predictions and show each one with a pass or fail tag
     metrics = compute_metrics(y_true, predictions, group)
     st.subheader('Fairness Metrics')
     st.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
@@ -744,7 +744,7 @@ with tab_errors:
     female_missed = all_positions[fn_mask & (group == 0)]
     male_missed = all_positions[fn_mask & (group == 1)]
  
-    # Work out the false negative rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
+    # Calculate the false negative rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
     female_true_total = ((group == 0) & (y_true == 1)).sum()
     male_true_total = ((group == 1) & (y_true == 1)).sum()
     female_fnr_display = len(female_missed) / female_true_total if female_true_total > 0 else 0
@@ -797,7 +797,7 @@ with tab_errors:
     female_alarm = all_positions[fp_mask & (group == 0)]
     male_alarm = all_positions[fp_mask & (group == 1)]
  
-    # Work out the false positive rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
+    # Calculate the false positive rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
     female_healthy_total = ((group == 0) & (y_true == 0)).sum()
     male_healthy_total = ((group == 1) & (y_true == 0)).sum()
     female_fpr_display = len(female_alarm) / female_healthy_total if female_healthy_total > 0 else 0
@@ -1069,7 +1069,7 @@ with panel_compare:
                       'Accuracy': 'A higher value is better, since this measures how often the model is correct overall.',
                       'Recall': 'A higher value is better, since this measures how many true disease cases the model correctly flags.'}
  
-    # Work out every method's metrics for both datasets at the current thresholds, so the panels below read from live results
+    # Calculate every method's metrics for both datasets at the current thresholds, so the panels below read from live results
     uci_results = {}
     kaggle_results = {}
     for method in comparison_methods:

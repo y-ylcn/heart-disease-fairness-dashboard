@@ -598,21 +598,21 @@ with tab_tradeoff:
     plain_meaning = {
         'Demographic Parity Difference':
             '**Are both groups flagged equally often?** Out of every 100 female patients, **{:.0f}** are flagged as '
-            'having disease. Out of every 100 male patients, **{:.0f}** are flagged.'.format(female_flagged, male_flagged),
+            'having disease. Out of every 100 male patients, **{:.0f}** are flagged as having disease.'.format(female_flagged, male_flagged),
         'Equalised Odds Difference':
             '**Does the model catch disease and raise false alarms equally for both groups?** Among patients who truly '
-            'have disease, the model correctly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 men. '
-            'Among healthy patients, the model wrongly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 '
-            'men.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
+            'have disease, the model correctly flags **{:.0f}** as having disease in every 100 women and **{:.0f}** in '
+            'every 100 men. Among patients who do not have disease, the model wrongly flags **{:.0f}** as having '
+            'disease in every 100 women and **{:.0f}** in every 100 men.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
         'Predictive Parity Difference':
-            '**Can a positive flag be trusted equally for both groups?** When a female patient is flagged, the flag '
-            'is correct **{:.0f}** times in every 100. When a male patient is flagged, **{:.0f}** times in every '
-            '100.'.format(female_correct_flag, male_correct_flag),
+            '**Can a positive flag be trusted equally for both groups?** When a female patient is flagged as having '
+            'disease, the flag is correct **{:.0f}** times in every 100. When a male patient is flagged as having '
+            'disease, the flag is correct **{:.0f}** times in every 100.'.format(female_correct_flag, male_correct_flag),
         'Disparate Impact Ratio':
-            '**Are the two groups flagged in similar proportion?** The group flagged less often is flagged at **{:.0f}** '
-            'percent of the rate of the group flagged more often. A value of 100 percent would mean the two groups are '
-            'flagged equally often, and the further below 100 it falls, the wider the gap between '
-            'them.'.format((min(female_flagged, male_flagged) / max(female_flagged, male_flagged) * 100)
+            '**Are the two groups flagged in similar proportion?** The group flagged as having disease less often is '
+            'flagged at **{:.0f}** percent of the rate of the group flagged as having disease more often. A value of '
+            '100 percent would mean the two groups are flagged as having disease equally often, and the further below '
+            '100 it falls, the wider the gap between them.'.format((min(female_flagged, male_flagged) / max(female_flagged, male_flagged) * 100)
                           if max(female_flagged, male_flagged) > 0 else 0)}
  
     # Two metrics to a row rather than four, so each note has half the width instead of a quarter

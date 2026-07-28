@@ -349,7 +349,7 @@ def threshold_grid(prefix, group_column, method, step=0.01):
     female_truth = y_true[group == 0]
     male_truth = y_true[group == 1]
  
-    # Each row holds the flags at one threshold, which lets the whole grid be worked out without looping over it
+    # Each row holds the flags at one threshold, which lets the whole grid be calculated without looping over it
     female_flags = female_scores[None, :] >= grid[:, None]
     male_flags = male_scores[None, :] >= grid[:, None]
  
@@ -676,7 +676,7 @@ with tab_tradeoff:
  
         # Point out what the gap in the two false negative rates means, since this is where under-diagnosis appears
         # The rates themselves are in the boxes above, so the note reads them rather than repeating the figures
-        # A rate worked out over a small group is less reliable, so the note says how many patients the female rate rests on
+        # A rate calculated over a small group is less reliable, so the note says how many patients the female rate rests on
         female_true_cases = int(((group == 0) & (y_true == 1)).sum())
         callout = ('Any gap between the two false negative rates is where under-diagnosis would surface, since it '
                    'means one group\'s real cases are missed more often than the other\'s.')
@@ -857,7 +857,7 @@ with panel_overview:
     overview_total.metric('Total Patients', '{}'.format(DATASET_TOTAL[prefix]),
                           help='The number of patients left after cleaning the raw data, before the split into training and test sets.')
     overview_test.metric('Test Set (shown here)', '{}'.format(n_test),
-                         help='The held-out portion the dashboard runs on. The fairness measures and error tables are all worked out on these patients. The one exception is the disease rate below, which is measured across the full dataset.')
+                         help='The held-out portion the dashboard runs on. The fairness measures and error tables are all calculated on these patients. The one exception is the disease rate below, which is measured across the full dataset.')
     overview_features.metric('Features Used', '{}'.format(n_features))
  
     # Add the short preparation note, so the patient count and the choice of features make sense
@@ -896,9 +896,9 @@ with panel_overview:
 
 with panel_explain:
  
-    # The SHAP explanations were worked out for the baseline model only, so this tab shows a note when a mitigation is chosen
+    # The SHAP explanations were calculated for the baseline model only, so this tab shows a note when a mitigation is chosen
     if mitigation_name != 'Baseline':
-        st.info('The explanations on this tab are worked out for the baseline model only, so they appear once the '
+        st.info('The explanations on this tab are calculated for the baseline model only, so they appear once the '
                 'baseline is selected in the control panel. The SHAP values were saved for the baseline model, since that '
                 'is the one being audited. SMOTE-NC and reweighting retrain the model, so their explanations would need '
                 'their own SHAP values, while the threshold optimiser leaves the model untouched and changes only the '
@@ -919,7 +919,7 @@ with panel_explain:
  
         # Plot the two rankings side by side, so the way the model uses each feature for each sex can be compared
         st.subheader('Feature Importance by {}'.format(group_label))
-        st.caption('This shows which patient details the model relies on most, worked out separately for female and '
+        st.caption('This shows which patient details the model relies on most, calculated separately for female and '
                    'male patients using SHAP. Each bar is the average importance of a feature, so the longer the bar, '
                    'the more heavily the model leans on that feature for that group. What to look for is whether sex '
                    'itself sits near the top for one group but not the other. If the model leans on sex when judging '
@@ -1079,7 +1079,7 @@ with panel_compare:
     # Let the user pick which metric to compare, with an option to see every metric at once, and whether to see every method or just one
     st.subheader('Fairness and Performance Results')
     st.caption('Pick a single metric to compare the two datasets as bars, or pick All to read every metric together in '
-               'the table below. These values are worked out at the current slider thresholds, so they move as the '
+               'the table below. These values are calculated at the current slider thresholds, so they move as the '
                'sliders are adjusted, which makes it possible to see how the same change plays out across both datasets '
                'at once.')
     metric_choice = st.selectbox('Metric', ['All'] + comparison_metrics)

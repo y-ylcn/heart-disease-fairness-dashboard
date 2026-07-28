@@ -715,11 +715,11 @@ with tab_errors:
     # Missed cases sit on the top row against the patients who truly have disease, drawn in red over the ones the model caught
     missed_female_column, missed_male_column = st.columns(2)
     missed_female_column.markdown('**Of 100 female patients who truly have disease**')
-    missed_female_column.markdown(icon_array(female_missed_per_hundred, '#7b241c', '#2e8b57'), unsafe_allow_html=True)
+    missed_female_column.markdown(icon_array(female_missed_per_hundred, '#7b241c', '#3cae6d'), unsafe_allow_html=True)
     missed_female_column.caption('{} are missed, {} are correctly flagged.'.format(female_missed_per_hundred,
                                                                                    100 - female_missed_per_hundred))
     missed_male_column.markdown('**Of 100 male patients who truly have disease**')
-    missed_male_column.markdown(icon_array(male_missed_per_hundred, '#7b241c', '#2e8b57'), unsafe_allow_html=True)
+    missed_male_column.markdown(icon_array(male_missed_per_hundred, '#7b241c', '#3cae6d'), unsafe_allow_html=True)
     missed_male_column.caption('{} are missed, {} are correctly flagged.'.format(male_missed_per_hundred,
                                                                                  100 - male_missed_per_hundred))
  

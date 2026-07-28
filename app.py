@@ -211,7 +211,7 @@ METRIC_HELP = {
                               'The 0.8 line (the four-fifths rule) is shown in the comparison view as a common '
                               'reference point.'}
  
-# The plain-language meaning of each performance measure, shown as a help tooltip next to it on the performance panel
+# The plain-language meaning of each performance metric, shown as a help tooltip next to it on the performance panel
 PERF_HELP = {
     'Recall': 'Among the patients who truly have disease, the proportion the model correctly flags. A higher value is '
               'better, since it means fewer real cases are missed. It is also known as the true positive rate, or '
@@ -333,11 +333,11 @@ def icon_array(highlighted, highlight_colour, base_colour):
         squares.append('<div style="width:12px;height:12px;background:{};border-radius:2px;"></div>'.format(colour))
     return '<div style="display:grid;grid-template-columns:repeat(10,12px);gap:3px;">{}</div>'.format(''.join(squares))
  
-# Calculate the four fairness measures at every pair of thresholds, so the panel can search rather than leaving the user to hunt
-# The measures do not depend on the tolerance, so the grid is cached once and only the comparison is redone when the slider moves
+# Calculate the four fairness metrics at every pair of thresholds, so the panel can search rather than leaving the user to hunt
+# The metrics do not depend on the tolerance, so the grid is cached once and only the comparison is redone when the slider moves
 @st.cache_data
 def threshold_grid(prefix, group_column, method, step=0.01):
-    """Return the four fairness measures at every pair of thresholds."""
+    """Return the four fairness metrics at every pair of thresholds."""
     probabilities, _ = load_data(prefix)
     group = probabilities[group_column].values
     y_true = probabilities['y_true'].values
@@ -396,9 +396,9 @@ st.write('This dashboard is for the person who trains a clinical prediction mode
          'thresholds meets those constraints. The two heart disease datasets are worked examples, and the same '
          'approach applies to any binary clinical prediction task with a sensitive attribute.')
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
-         'underlying disease rates, no setting satisfies every fairness measure at once, so improving one comes '
+         'underlying disease rates, no setting satisfies every fairness metric at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '
-         'calculation, so the dashboard reports each measure in terms of patients rather than leaving it as a '
+         'calculation, so the dashboard reports each metric in terms of patients rather than leaving it as a '
          'decimal.')
  
 # List the three mitigation methods on their own, since the baseline is the untouched model rather than a mitigation
@@ -477,7 +477,7 @@ else:
     predictions[male_mask] = (proba[male_mask] >= male_threshold).astype(int)
  
 # The task needs two panels, and the rest is the data and the analysis behind them, so the strip carries the task and holds the rest behind one tab
-st.write('**The task sits in the first two tabs:** Fairness Metrics reports the four measures against the tolerance, '
+st.write('**The task sits in the first two tabs:** Fairness Metrics reports the four metrics against the tolerance, '
          'and Errors shows the patients behind those numbers. The data and analysis behind them sit in the third tab.')
 tab_tradeoff, tab_errors, tab_analysis = st.tabs(['Fairness Metrics', 'Errors', 'Data and Analysis'])
  
@@ -495,7 +495,7 @@ with tab_tradeoff:
     # The task is to find a pair of thresholds that meets the fairness bar, so the panel searches every pair rather than leaving the user to hunt
     st.subheader('Settings That Meet the Tolerance')
     st.caption('A setting is a pair of thresholds, one threshold for female patients and one for male patients. Every '
-               'point on this map is a pair, shaded when all four measures sit within the tolerance set in the control '
+               'point on this map is a pair, shaded when all four metrics sit within the tolerance set in the control '
                'panel. Tightening the tolerance shrinks the shaded area, and where the two groups have very different '
                'disease rates it disappears altogether. The base rate panel under Data and Analysis gives the size of '
                'that gap. The marker shows where the sliders currently sit.')
@@ -526,13 +526,13 @@ with tab_tradeoff:
         # Say straight out whether the shaded area exists
         working = int(meets.sum())
         if working > 0:
-            st.success('**Some settings meet all four measures at a tolerance of {:.2f}.** They are the shaded area on '
+            st.success('**Some settings meet all four metrics at a tolerance of {:.2f}.** They are the shaded area on '
                        'the map, and the marker shows where the current sliders sit.'.format(tolerance))
         else:
-            st.error('**No setting meets all four measures at a tolerance of {:.2f}.** Loosening the tolerance or '
-                     'accepting a gap on at least one measure is the only way through.'.format(tolerance))
+            st.error('**No setting meets all four metrics at a tolerance of {:.2f}.** Loosening the tolerance or '
+                     'accepting a gap on at least one metric is the only way through.'.format(tolerance))
  
-    # Say straight out whether the current result passes, and if it does not, name the measures it fails, so it does not have to be read off the map or the cards
+    # Say straight out whether the current result passes, and if it does not, name the metrics it fails, so it does not have to be read off the map or the cards
     # This runs for every method, so the threshold optimiser gets the same decision summary even though it has no pair on the map
     current = compute_metrics(y_true, predictions, group)
     current_fails = []
@@ -551,12 +551,12 @@ with tab_tradeoff:
     # The threshold optimiser sets its own threshold, so its summary drops the slider values that the other methods report
     if len(current_fails) == 0:
         if optimiser_chosen:
-            st.success('**Threshold optimiser result: it meets all four measures.**')
+            st.success('**Threshold optimiser result: it meets all four metrics.**')
         else:
-            st.success('**Current setting: it meets all four measures.** The female threshold is {:.2f} and the male '
+            st.success('**Current setting: it meets all four metrics.** The female threshold is {:.2f} and the male '
                        'threshold is {:.2f}.'.format(female_threshold, male_threshold))
     else:
-        # Join the failing measures into readable English, since a list joined with 'and' between every item reads badly
+        # Join the failing metrics into readable English, since a list joined with 'and' between every item reads badly
         if len(current_fails) == 1:
             failed_text = current_fails[0]
         elif len(current_fails) == 2:
@@ -579,7 +579,7 @@ with tab_tradeoff:
     st.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
                'Impact Ratio compares the groups as a ratio, so it reads as fair when close to 1. Each turns green '
                'when it sits within the tolerance set in the control panel. The technical definition is on the '
-               'question mark, and the note under each value gives the same measure as a count of patients.')
+               'question mark, and the note under each value gives the same metric as a count of patients.')
  
     # Each metric compares two rates, so it can be read back as a count of patients per hundred
     # A decimal on its own does not say how many people it covers, which is what a reader needs to judge it
@@ -637,9 +637,9 @@ with tab_tradeoff:
         # The reading in patients sits in a note under each value, since a decimal on its own does not say how many people it covers
         column.info(plain_meaning[name])
  
-    # The first and last measures are built from the same two rates, so only three of the four carry separate information
+    # The first and last metrics are built from the same two rates, so only three of the four carry separate information
     st.caption('Demographic Parity Difference and the Disparate Impact Ratio are two views of the same comparison. '
-               'One subtracts the two flagging rates, the other divides them, so only three of the four measures are '
+               'One subtracts the two flagging rates, the other divides them, so only three of the four metrics are '
                'independent.')
  
     st.divider()
@@ -656,7 +656,7 @@ with tab_tradeoff:
     # Predictive parity and equalised odds are read straight off these values, so they belong under the metrics rather than beside them
     # Keeping them in a drill-down leaves the panel above uncluttered while the working stays available
     with st.expander('Where these numbers come from: performance by {}'.format(group_label.lower())):
-        st.caption('Two of the measures above are read straight off the values below. Predictive Parity is the gap '
+        st.caption('Two of the metrics above are read straight off the values below. Predictive Parity is the gap '
                    'between female and male precision, and Equalised Odds is the larger of the recall gap and the '
                    'false positive rate gap. Recall, also called the true positive rate, is the proportion of real '
                    'disease cases the model correctly flags. The false negative rate is the proportion of real disease '
@@ -857,7 +857,7 @@ with panel_overview:
     overview_total.metric('Total Patients', '{}'.format(DATASET_TOTAL[prefix]),
                           help='The number of patients left after cleaning the raw data, before the split into training and test sets.')
     overview_test.metric('Test Set (shown here)', '{}'.format(n_test),
-                         help='The held-out portion the dashboard runs on. The fairness measures and error tables are all calculated on these patients. The one exception is the disease rate below, which is measured across the full dataset.')
+                         help='The held-out portion the dashboard runs on. The fairness metrics and error tables are all calculated on these patients. The one exception is the disease rate below, which is measured across the full dataset.')
     overview_features.metric('Features Used', '{}'.format(n_features))
  
     # Add the short preparation note, so the patient count and the choice of features make sense
@@ -876,12 +876,12 @@ with panel_overview:
  
     # 12. Disease rate in the data
  
-    # The gap between the two disease rates is the reason the fairness measures pull against each other, so it belongs with the description of the data
+    # The gap between the two disease rates is the reason the fairness metrics pull against each other, so it belongs with the description of the data
     st.subheader('Disease Rate by {} (Base Rate)'.format(group_label))
     st.caption('The proportion of female and male patients who actually have heart disease, known as the base rate. This is '
                'measured across the full dataset before the train and test split, so it describes the data as a whole '
                'rather than the test set the other panels work on. The wider this gap, the harder it becomes to satisfy '
-               'the fairness measures at the same time, which is what the Fairness Metrics tab reports. A large gap on '
+               'the fairness metrics at the same time, which is what the Fairness Metrics tab reports. A large gap on '
                'its own is not proof of bias, though. It might reflect a genuine difference in how often the disease '
                'occurs, or a history of under-diagnosis in one group, and the data alone cannot tell the two apart.')
     female_rate = base_rate['disease_rate'].values[0]
@@ -1038,7 +1038,7 @@ with panel_compare:
     st.subheader('Disease Rate Gap by Dataset')
     st.caption('This is the gap in disease rate between male and female patients within each dataset. The UCI data has '
                'a wide gap while the Kaggle data has almost none, and that contrast is the natural experiment at the '
-               'heart of the project. Because the difficulty of satisfying every fairness measure at once is driven by '
+               'heart of the project. Because the difficulty of satisfying every fairness metric at once is driven by '
                'the base-rate gap, the UCI data shows sharp trade-offs while the Kaggle data shows barely any. This gap '
                'is a property of the data itself, so it does not move when the sliders are changed.')
     uci_gap = (uci_base_rate['disease_rate'].values[1] - uci_base_rate['disease_rate'].values[0]) * 100

@@ -602,9 +602,9 @@ with tab_tradeoff:
         'Equalised Odds Difference':
             '**Does the model catch disease and raise false alarms equally for both groups?** Among patients who truly '
             'have disease, the model correctly flags **{:.0f}** as having disease in every 100 women and **{:.0f}** in '
-            'every 100 men. Among patients who do not have disease, the model wrongly flags **{:.0f}** as having '
-            'disease in every 100 women and **{:.0f}** in every 100 men. The score is the larger of these two gaps, '
-            'the gap in disease caught and the gap in false alarms.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
+            'every 100 men. Among healthy patients, the model wrongly flags **{:.0f}** as having disease in every 100 '
+            'women and **{:.0f}** in every 100 men. The score is the larger of these two gaps, the gap in disease '
+            'caught and the gap in false alarms.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
         'Predictive Parity Difference':
             '**Can a positive flag be trusted equally for both groups?** When a female patient is flagged as having '
             'disease, the flag is correct **{:.0f}** times in every 100. When a male patient is flagged as having '

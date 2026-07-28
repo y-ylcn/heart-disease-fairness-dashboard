@@ -198,10 +198,10 @@ METRIC_HELP = {
                                      'gap between the proportion of female patients and the proportion of male patients '
                                      'predicted to have disease, so a value of 0 means both groups are flagged equally '
                                      'often.',
-    'Equalised Odds Difference': 'Whether the model is equally accurate for both sexes, looking separately at the '
-                                 'patients who truly have disease and those who do not. It takes the larger of two '
-                                 'gaps, the gap in the true positive rate and the gap in the false positive rate, so a '
-                                 'value of 0 means the model makes the same kinds of error for each group.',
+    'Equalised Odds Difference': 'Whether the model catches disease and raises false alarms at the same rate for both '
+                                 'sexes, looking separately at the patients who truly have disease and those who do '
+                                 'not. It takes the larger of two gaps, the gap in the true positive rate and the gap '
+                                 'in the false positive rate, so a value of 0 means both rates match for each group.',
     'Predictive Parity Difference': 'Whether a positive prediction can be trusted equally for both sexes. It is the gap '
                                     'in precision between the groups, precision being the proportion of flagged patients '
                                     'who truly have disease, so a value of 0 means a \'disease\' flag carries the same '
@@ -600,9 +600,9 @@ with tab_tradeoff:
             '**Are both groups flagged equally often?** Out of every 100 female patients, **{:.0f}** are flagged as '
             'having disease. Out of every 100 male patients, **{:.0f}** are flagged.'.format(female_flagged, male_flagged),
         'Equalised Odds Difference':
-            '**Does the model make the same kinds of mistake for both groups?** Among patients who truly have '
-            'disease, the model correctly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 men. Among '
-            'healthy patients, the model wrongly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 '
+            '**Does the model catch disease and raise false alarms equally for both groups?** Among patients who truly '
+            'have disease, the model correctly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 men. '
+            'Among healthy patients, the model wrongly flags **{:.0f}** in every 100 women and **{:.0f}** in every 100 '
             'men.'.format(female_caught, male_caught, female_alarmed, male_alarmed),
         'Predictive Parity Difference':
             '**Can a positive flag be trusted equally for both groups?** When a female patient is flagged, the flag '

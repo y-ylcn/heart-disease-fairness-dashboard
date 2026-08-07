@@ -728,6 +728,8 @@ with tab_tradeoff:
                         'strong signal of direction rather than an exact measurement.'.format(female_true_cases))
             
         st.info(callout)
+
+    st.divider()
  
     # 8. Outcomes for a hundred patients
  

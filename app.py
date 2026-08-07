@@ -389,7 +389,7 @@ def threshold_grid(prefix, group_column, method, step=0.01):
 # 4. Sidebar controls and page layout
  
 # State who the dashboard is for and what task it supports, so the panels below can be read against a clear purpose
-st.title('Fairness Trade-off Dashboard')
+st.title('Fairness Trade-off Dashboard for a Binary Classifier')
 st.write('This dashboard is for the person who trains a clinical prediction model and has to decide whether its '
          'behaviour is acceptable before handing it to a clinician. The user sets how large a difference between '
          'the two patient groups is acceptable, and the dashboard shows whether any combination of the two decision '
@@ -476,10 +476,10 @@ else:
     predictions[female_mask] = (proba[female_mask] >= female_threshold).astype(int)
     predictions[male_mask] = (proba[male_mask] >= male_threshold).astype(int)
  
-# The task needs two panels, and the rest is the data and the analysis behind them, so the strip carries the task and holds the rest behind one tab
-st.write('**The task sits in the first two tabs:** Fairness Metrics reports the four metrics against the tolerance, '
-         'and Errors shows the patients behind those numbers. The data and analysis behind them sit in the third tab.')
-tab_tradeoff, tab_errors, tab_analysis = st.tabs(['Fairness Metrics', 'Errors', 'Data and Analysis'])
+# The first tab carries the whole task, the metrics and the patients behind them, and the data and analysis sit behind the second
+st.write('**The task sits in the first tab:** Fairness Metrics and Errors reports the four metrics against the tolerance '
+         'and shows the patients behind those numbers. The data and analysis behind them sit in the second tab.')
+tab_tradeoff, tab_analysis = st.tabs(['Fairness Metrics and Errors', 'Data and Analysis'])
  
 # The four panels open one at a time inside their own tab, so a second strip of tabs does not compete with the one above
 with tab_analysis:
@@ -579,7 +579,7 @@ with tab_tradeoff:
     st.caption('Three of these are gaps between the two groups, so they read as fair when close to 0. The Disparate '
                'Impact Ratio compares the groups as a ratio, so it reads as fair when close to 1. Each turns green '
                'when it sits within the tolerance set in the control panel. The technical definition is on the '
-               'question mark, and the note under each value gives the same metric as a count of patients.')
+               'question mark, and the expander under each value gives the same metric as a count of patients.')
  
     # Each metric compares two rates, so it can be read back as a count of patients per hundred
     # A decimal on its own does not say how many people it covers, which is what a reader needs to judge it
@@ -616,6 +616,47 @@ with tab_tradeoff:
             '100 it falls, the wider the gap between them.'.format((min(female_flagged, male_flagged) / max(female_flagged, male_flagged) * 100)
                           if max(female_flagged, male_flagged) > 0 else 0)}
  
+    # A bar chart above the cards gives the four metrics at a glance, since a single view is quicker to read than four separate cards
+    # The three difference metrics share one chart with a tolerance line, and the ratio sits in its own chart since it is fair near 1 rather than 0
+    difference_names = ['Demographic Parity Difference', 'Equalised Odds Difference', 'Predictive Parity Difference']
+    difference_values = [metrics[name] for name in difference_names]
+    short_labels = ['Demographic\nParity', 'Equalised\nOdds', 'Predictive\nParity']
+
+    chart_left, chart_right = st.columns(2)
+    with chart_left:
+
+        # The three difference metrics as horizontal bars, each green within the tolerance and red outside it, with the tolerance drawn as a vertical line
+        fig, ax = plt.subplots(figsize=(5, 2.8))
+        bar_colours = ['#1e6b3a' if value <= tolerance else '#7b241c' for value in difference_values]
+        ax.barh(short_labels, difference_values, color=bar_colours)
+        ax.axvline(tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(tolerance))
+        ax.set_xlim(0, max(0.5, max(difference_values) * 1.15))
+        ax.set_xlabel('Difference (Lower is fairer)', fontsize=9)
+        ax.tick_params(labelsize=8)
+        ax.legend(fontsize=8, loc='lower right')
+        ax.invert_yaxis()
+        plt.tight_layout()
+        st.pyplot(fig)
+        plt.close(fig)
+
+    with chart_right:
+
+        # The disparate impact ratio on its own, fair near 1, with the one-minus-tolerance line and the fixed four-fifths reference
+        di_value = metrics['Disparate Impact Ratio']
+        fig, ax = plt.subplots(figsize=(5, 2.8))
+        di_colour = '#1e6b3a' if di_value >= (1 - tolerance) else '#7b241c'
+        ax.barh(['Disparate\nImpact'], [di_value], color=di_colour)
+        ax.axvline(1 - tolerance, linestyle='--', color='#999999', label='Tolerance ({:.2f})'.format(1 - tolerance))
+        ax.axvline(0.8, linestyle=':', color='#999999', label='Four-fifths (0.8)')
+        ax.set_xlim(0, 1)
+        ax.set_xlabel('Ratio (Higher is fairer)', fontsize=9)
+        ax.tick_params(labelsize=8)
+        ax.legend(fontsize=7, loc='lower left')
+        plt.tight_layout()
+        st.pyplot(fig)
+        plt.close(fig)
+
+    # The cards below repeat the same four metrics with their exact values and the count in patients, so the chart above is the glance and the cards are the detail
     # Two metrics to a row rather than four, so each note has half the width instead of a quarter
     columns_row_one = st.columns(2)
     columns_row_two = st.columns(2)
@@ -623,19 +664,23 @@ with tab_tradeoff:
     for i, name in enumerate(metrics):
         value = metrics[name]
         column = metric_rows[i][i % 2]
+
         # Disparate Impact is a ratio that is fair near 1, while the others are differences that are fair near 0
         if name == 'Disparate Impact Ratio':
             within = value >= (1 - tolerance)
         else:
             within = value <= tolerance
+
         # The help text explains what each metric measures, shown as a help tooltip next to the value
         column.metric(name, '{:.4f}'.format(value), help=METRIC_HELP[name])
         if within:
             column.success('Within Tolerance')
         else:
             column.error('Outside Tolerance')
-        # The reading in patients sits in a note under each value, since a decimal on its own does not say how many people it covers
-        column.info(plain_meaning[name])
+
+        # The reading in patients sits in an expander under each value, so the card stays compact for a regular user while the plain-language count is one click away
+        with column.expander('What this means per 100 patients'):
+            st.info(plain_meaning[name])
  
     # The first and last metrics are built from the same two rates, so only three of the four carry separate information
     st.caption('Demographic Parity Difference and the Disparate Impact Ratio are two views of the same comparison. '
@@ -686,9 +731,6 @@ with tab_tradeoff:
             
         st.info(callout)
  
-
-with tab_errors:
- 
     # A short framing so the clinical language below reads as the cost the developer weighs, not as advice to a clinician
     st.caption('These panels show who the current model and thresholds affect. The developer reads them to weigh the '
                'clinical cost of the errors before deciding whether the model is ready to hand over to a clinician.')
@@ -735,108 +777,111 @@ with tab_errors:
                                                                                           100 - male_alarm_per_hundred))
  
     st.divider()
- 
-    # 9. Missed patients (false negatives)
- 
-    # Find the patients the model missed with the current predictions, who truly have disease but were predicted healthy
-    fn_mask = (y_true == 1) & (predictions == 0)
-    all_positions = np.arange(len(y_true))
-    female_missed = all_positions[fn_mask & (group == 0)]
-    male_missed = all_positions[fn_mask & (group == 1)]
- 
-    # Calculate the false negative rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
-    female_true_total = ((group == 0) & (y_true == 1)).sum()
-    male_true_total = ((group == 1) & (y_true == 1)).sum()
-    female_fnr_display = len(female_missed) / female_true_total if female_true_total > 0 else 0
-    male_fnr_display = len(male_missed) / male_true_total if male_true_total > 0 else 0
- 
-    # Show how many true cases were missed in each group, with the false negative rate alongside so the group sizes are accounted for
-    st.subheader('Missed Patients (False Negatives)')
-    st.caption('A missed patient truly has disease but was predicted healthy. In a clinical setting this is the more '
-               'serious kind of error, since a patient who needs care is sent away believing they are clear. The '
-               'counts below are raw numbers, so for a fair comparison between the groups look at the false negative '
-               'rate shown beneath each count, or the rates on the Fairness Metrics tab, both of which account for the '
-               'different group sizes.')
-    female_column, male_column = st.columns(2)
-    female_column.metric('Female Missed', len(female_missed))
-    female_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false negative rate of '
-                           '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
-                           '<span style="color:#1f3b6f;font-weight:600;">{}</span> female patients with disease</span>'
-                           .format(female_fnr_display, female_true_total), unsafe_allow_html=True)
-    male_column.metric('Male Missed', len(male_missed))
-    male_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false negative rate of '
-                         '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
-                         '<span style="color:#1f3b6f;font-weight:600;">{}</span> male patients with disease</span>'
-                         .format(male_fnr_display, male_true_total), unsafe_allow_html=True)
- 
-    # List every missed patient with their sex, and add the probability unless the threshold optimiser is chosen, since it gives no probability
-    missed = all_positions[fn_mask]
-    missed_sex = []
-    for position in missed:
-        missed_sex.append('Female' if group[position] == 0 else 'Male')
-    if optimiser_chosen:
-        # Tell the user why the probability column is missing, since the threshold optimiser returns a decision rather than a score
-        st.caption('As with the missed patients above, there is no probability score to show for the threshold optimiser.')
-        missed_table = pd.DataFrame({'Position': missed, group_label: missed_sex})
-    else:
-        missed_table = pd.DataFrame({'Position': missed, group_label: missed_sex, 'Predicted Probability': proba[missed]})
- 
-    # Let the user filter the table by sex, so the missed cases of one group can be looked at on their own
-    missed_filter = st.selectbox('Filter Missed Patients by {}'.format(group_label), ['All', 'Female', 'Male'])
-    if missed_filter != 'All':
-        missed_table = missed_table[missed_table[group_label] == missed_filter]
-    st.dataframe(missed_table.round(4), hide_index=True)
- 
-    st.divider()
- 
-    # 10. False alarms (false positives)
- 
-    # Find the false alarms with the current predictions, who are truly healthy but were predicted to have disease
-    fp_mask = (y_true == 0) & (predictions == 1)
-    false_alarm = all_positions[fp_mask]
-    female_alarm = all_positions[fp_mask & (group == 0)]
-    male_alarm = all_positions[fp_mask & (group == 1)]
- 
-    # Calculate the false positive rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
-    female_healthy_total = ((group == 0) & (y_true == 0)).sum()
-    male_healthy_total = ((group == 1) & (y_true == 0)).sum()
-    female_fpr_display = len(female_alarm) / female_healthy_total if female_healthy_total > 0 else 0
-    male_fpr_display = len(male_alarm) / male_healthy_total if male_healthy_total > 0 else 0
- 
-    # Show how many healthy patients were flagged in each group, with the false positive rate alongside so the group sizes are accounted for
-    st.subheader('False Alarms (False Positives)')
-    st.caption('A false alarm flags a healthy patient as having disease. This is less serious than a missed case, but '
-               'it still leads to unnecessary tests and needless worry. The counts below are raw numbers, so for a fair '
-               'comparison between the groups look at the false positive rate shown beneath each count, or the rates on '
-               'the Fairness Metrics tab, both of which account for the different group sizes.')
-    female_alarm_column, male_alarm_column = st.columns(2)
-    female_alarm_column.metric('Female False Alarms', len(female_alarm))
-    female_alarm_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false positive rate of '
-                                 '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
-                                 '<span style="color:#1f3b6f;font-weight:600;">{}</span> healthy female patients</span>'
-                                 .format(female_fpr_display, female_healthy_total), unsafe_allow_html=True)
-    male_alarm_column.metric('Male False Alarms', len(male_alarm))
-    male_alarm_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false positive rate of '
+
+    # The two patient-level tables sit in an expander, since they are the finest detail and would otherwise make the tab very long
+    with st.expander('Patient-level detail: missed cases and false alarms'):
+
+        # 9. Missed patients (false negatives)
+
+        # Find the patients the model missed with the current predictions, who truly have disease but were predicted healthy
+        fn_mask = (y_true == 1) & (predictions == 0)
+        all_positions = np.arange(len(y_true))
+        female_missed = all_positions[fn_mask & (group == 0)]
+        male_missed = all_positions[fn_mask & (group == 1)]
+
+        # Calculate the false negative rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
+        female_true_total = ((group == 0) & (y_true == 1)).sum()
+        male_true_total = ((group == 1) & (y_true == 1)).sum()
+        female_fnr_display = len(female_missed) / female_true_total if female_true_total > 0 else 0
+        male_fnr_display = len(male_missed) / male_true_total if male_true_total > 0 else 0
+
+        # Show how many true cases were missed in each group, with the false negative rate alongside so the group sizes are accounted for
+        st.subheader('Missed Patients (False Negatives)')
+        st.caption('A missed patient truly has disease but was predicted healthy. In a clinical setting this is the more '
+                   'serious kind of error, since a patient who needs care is sent away believing they are clear. The '
+                   'counts below are raw numbers, so for a fair comparison between the groups look at the false negative '
+                   'rate shown beneath each count, or the rates in the fairness metrics above, both of which account for the '
+                   'different group sizes.')
+        female_column, male_column = st.columns(2)
+        female_column.metric('Female Missed', len(female_missed))
+        female_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false negative rate of '
                                '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
-                               '<span style="color:#1f3b6f;font-weight:600;">{}</span> healthy male patients</span>'
-                               .format(male_fpr_display, male_healthy_total), unsafe_allow_html=True)
- 
-    # List every false alarm with their sex, and add the probability unless the threshold optimiser is chosen, since it gives no probability
-    alarm_sex = []
-    for position in false_alarm:
-        alarm_sex.append('Female' if group[position] == 0 else 'Male')
-    if optimiser_chosen:
-        # Tell the user why the probability column is missing, since the threshold optimiser returns a decision rather than a score
-        st.caption('The threshold optimiser produces a decision directly rather than a probability score, so the predicted-probability column is not shown for it.')
-        alarm_table = pd.DataFrame({'Position': false_alarm, group_label: alarm_sex})
-    else:
-        alarm_table = pd.DataFrame({'Position': false_alarm, group_label: alarm_sex, 'Predicted Probability': proba[false_alarm]})
- 
-    # Let the user filter the table by sex, so the false alarms of one group can be looked at on their own
-    alarm_filter = st.selectbox('Filter False Alarms by {}'.format(group_label), ['All', 'Female', 'Male'])
-    if alarm_filter != 'All':
-        alarm_table = alarm_table[alarm_table[group_label] == alarm_filter]
-    st.dataframe(alarm_table.round(4), hide_index=True)
+                               '<span style="color:#1f3b6f;font-weight:600;">{}</span> female patients with disease</span>'
+                               .format(female_fnr_display, female_true_total), unsafe_allow_html=True)
+        male_column.metric('Male Missed', len(male_missed))
+        male_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false negative rate of '
+                             '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
+                             '<span style="color:#1f3b6f;font-weight:600;">{}</span> male patients with disease</span>'
+                             .format(male_fnr_display, male_true_total), unsafe_allow_html=True)
+
+        # List every missed patient with their sex, and add the probability unless the threshold optimiser is chosen, since it gives no probability
+        missed = all_positions[fn_mask]
+        missed_sex = []
+        for position in missed:
+            missed_sex.append('Female' if group[position] == 0 else 'Male')
+        if optimiser_chosen:
+            # Tell the user why the probability column is missing, since the threshold optimiser returns a decision rather than a score
+            st.caption('As with the missed patients above, there is no probability score to show for the threshold optimiser.')
+            missed_table = pd.DataFrame({'Position': missed, group_label: missed_sex})
+        else:
+            missed_table = pd.DataFrame({'Position': missed, group_label: missed_sex, 'Predicted Probability': proba[missed]})
+
+        # Let the user filter the table by sex, so the missed cases of one group can be looked at on their own
+        missed_filter = st.selectbox('Filter Missed Patients by {}'.format(group_label), ['All', 'Female', 'Male'])
+        if missed_filter != 'All':
+            missed_table = missed_table[missed_table[group_label] == missed_filter]
+        st.dataframe(missed_table.round(4), hide_index=True)
+
+        st.divider()
+
+        # 10. False alarms (false positives)
+
+        # Find the false alarms with the current predictions, who are truly healthy but were predicted to have disease
+        fp_mask = (y_true == 0) & (predictions == 1)
+        false_alarm = all_positions[fp_mask]
+        female_alarm = all_positions[fp_mask & (group == 0)]
+        male_alarm = all_positions[fp_mask & (group == 1)]
+
+        # Calculate the false positive rate for each group, so the counts can be shown next to the rate that accounts for the group sizes
+        female_healthy_total = ((group == 0) & (y_true == 0)).sum()
+        male_healthy_total = ((group == 1) & (y_true == 0)).sum()
+        female_fpr_display = len(female_alarm) / female_healthy_total if female_healthy_total > 0 else 0
+        male_fpr_display = len(male_alarm) / male_healthy_total if male_healthy_total > 0 else 0
+
+        # Show how many healthy patients were flagged in each group, with the false positive rate alongside so the group sizes are accounted for
+        st.subheader('False Alarms (False Positives)')
+        st.caption('A false alarm flags a healthy patient as having disease. This is less serious than a missed case, but '
+                   'it still leads to unnecessary tests and needless worry. The counts below are raw numbers, so for a fair '
+                   'comparison between the groups look at the false positive rate shown beneath each count, or the rates on '
+                   'the fairness metrics above, both of which account for the different group sizes.')
+        female_alarm_column, male_alarm_column = st.columns(2)
+        female_alarm_column.metric('Female False Alarms', len(female_alarm))
+        female_alarm_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false positive rate of '
+                                     '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
+                                     '<span style="color:#1f3b6f;font-weight:600;">{}</span> healthy female patients</span>'
+                                     .format(female_fpr_display, female_healthy_total), unsafe_allow_html=True)
+        male_alarm_column.metric('Male False Alarms', len(male_alarm))
+        male_alarm_column.markdown('<span style="color:#6c757d;font-size:0.95rem;">A false positive rate of '
+                                   '<span style="color:#1f3b6f;font-weight:600;">{:.1%}</span>, out of '
+                                   '<span style="color:#1f3b6f;font-weight:600;">{}</span> healthy male patients</span>'
+                                   .format(male_fpr_display, male_healthy_total), unsafe_allow_html=True)
+
+        # List every false alarm with their sex, and add the probability unless the threshold optimiser is chosen, since it gives no probability
+        alarm_sex = []
+        for position in false_alarm:
+            alarm_sex.append('Female' if group[position] == 0 else 'Male')
+        if optimiser_chosen:
+            # Tell the user why the probability column is missing, since the threshold optimiser returns a decision rather than a score
+            st.caption('The threshold optimiser produces a decision directly rather than a probability score, so the predicted-probability column is not shown for it.')
+            alarm_table = pd.DataFrame({'Position': false_alarm, group_label: alarm_sex})
+        else:
+            alarm_table = pd.DataFrame({'Position': false_alarm, group_label: alarm_sex, 'Predicted Probability': proba[false_alarm]})
+
+        # Let the user filter the table by sex, so the false alarms of one group can be looked at on their own
+        alarm_filter = st.selectbox('Filter False Alarms by {}'.format(group_label), ['All', 'Female', 'Male'])
+        if alarm_filter != 'All':
+            alarm_table = alarm_table[alarm_table[group_label] == alarm_filter]
+        st.dataframe(alarm_table.round(4), hide_index=True)
  
 
 with panel_overview:
@@ -881,7 +926,7 @@ with panel_overview:
     st.caption('The proportion of female and male patients who actually have heart disease, known as the base rate. This is '
                'measured across the full dataset before the train and test split, so it describes the data as a whole '
                'rather than the test set the other panels work on. The wider this gap, the harder it becomes to satisfy '
-               'the fairness metrics at the same time, which is what the Fairness Metrics tab reports. A large gap on '
+               'the fairness metrics at the same time, which is what the Fairness Metrics and Errors tab reports. A large gap on '
                'its own is not proof of bias, though. It might reflect a genuine difference in how often the disease '
                'occurs, or a history of under-diagnosis in one group, and the data alone cannot tell the two apart.')
     female_rate = base_rate['disease_rate'].values[0]
@@ -903,7 +948,7 @@ with panel_explain:
                 'is the one being audited. SMOTE-NC and reweighting retrain the model, so their explanations would need '
                 'their own SHAP values, while the threshold optimiser leaves the model untouched and changes only the '
                 'decision threshold. Select the baseline to view the explanations. To compare the mitigation methods, use '
-                'the Fairness Metrics and Errors tabs, or Calibration & ROC and Dataset and Metric Comparison under '
+                'the Fairness Metrics and Errors tab, or Calibration & ROC and Dataset and Metric Comparison under '
                 'Data and Analysis.')
     else:
  

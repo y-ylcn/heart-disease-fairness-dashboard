@@ -398,7 +398,7 @@ st.write('This dashboard is for the person who trains a clinical prediction mode
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
          'underlying disease rates, no setting satisfies every fairness metric at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '
-         'calculation, so the dashboard reports each metric both as a decimal and as a count of patients.')
+         'calculation, so the dashboard reports each metric both as a value and as a count of patients.')
  
 # List the three mitigation methods on their own, since the baseline is the untouched model rather than a mitigation
 mitigation_methods = ['SMOTE-NC', 'Reweighting', 'Threshold Optimiser']

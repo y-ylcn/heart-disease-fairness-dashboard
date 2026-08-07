@@ -686,9 +686,7 @@ with tab_tradeoff:
     st.caption('Demographic Parity Difference and the Disparate Impact Ratio are two views of the same comparison. '
                'One subtracts the two flagging rates, the other divides them, so only three of the four metrics are '
                'independent.')
- 
-    st.divider()
- 
+
     # 7. Where the fairness metrics come from
  
     # Split recall, precision and the two error rates by sex, so under-diagnosis shows up as a higher female false negative rate
@@ -771,8 +769,6 @@ with tab_tradeoff:
     alarm_male_column.markdown(icon_array(male_alarm_per_hundred, '#e67e22', '#e2e8f0'), unsafe_allow_html=True)
     alarm_male_column.caption('{} are flagged in error, {} are correctly cleared.'.format(male_alarm_per_hundred,
                                                                                           100 - male_alarm_per_hundred))
- 
-    st.divider()
 
     # The two patient-level tables sit in an expander, since they are the finest detail and would otherwise make the tab very long
     with st.expander('Patient-level detail: missed cases and false alarms'):

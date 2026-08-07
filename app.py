@@ -208,7 +208,7 @@ METRIC_HELP = {
                                     'weight for a female and a male patient.',
     'Disparate Impact Ratio': 'The ratio between the lower and the higher of the two groups\' positive-prediction '
                               'rates, so it runs from 0 to 1. A ratio of 1 means both groups are flagged equally often. '
-                              'The 0.8 line (the four-fifths rule) is shown in the comparison view as a common '
+                              'The 0.8 line (the four-fifths rule) is drawn on the chart as a common '
                               'reference point.'}
  
 # The plain-language meaning of each performance metric, shown as a help tooltip next to it on the performance panel
@@ -398,8 +398,7 @@ st.write('This dashboard is for the person who trains a clinical prediction mode
 st.write('The dashboard does not pick a fair model on the user\'s behalf. When the two groups have different '
          'underlying disease rates, no setting satisfies every fairness metric at once, so improving one comes '
          'at the cost of another. That trade-off is what the dashboard lays out. It makes this a judgement, not a '
-         'calculation, so the dashboard reports each metric in terms of patients rather than leaving it as a '
-         'decimal.')
+         'calculation, so the dashboard reports each metric both as a decimal and as a count of patients.')
  
 # List the three mitigation methods on their own, since the baseline is the untouched model rather than a mitigation
 mitigation_methods = ['SMOTE-NC', 'Reweighting', 'Threshold Optimiser']
@@ -735,7 +734,7 @@ with tab_tradeoff:
  
     # A rate is easier to judge as a count of people than as a decimal, so each error rate is drawn as a hundred squares
     # The two rates have different denominators, since a missed case is counted against the patients who truly have disease and a false alarm against the healthy ones
-    st.subheader('What Happens to 100 Patients')
+    st.subheader('Errors: What Happens to 100 Patients')
     st.caption('Each square is one patient, under the model and thresholds currently selected. The top row takes 100 '
                'patients who truly have disease and shades the ones the model misses. The bottom row takes 100 healthy '
                'patients and shades the ones it flags in error. Reading the two groups side by side shows how the same '

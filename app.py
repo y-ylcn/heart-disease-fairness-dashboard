@@ -884,7 +884,7 @@ with panel_overview:
  
     # Give a plain description of the dataset in view, so the user knows what they are looking at before the analysis
     st.subheader('About This Dataset')
-    st.caption('This tab describes the dataset currently selected in the control panel. It gives the size of the data, '
+    st.caption('This panel describes the dataset currently selected in the control panel. It gives the size of the data, '
                'the meaning of every feature the model uses, and the disease rate in each group. Switching the dataset '
                'in the control panel updates everything shown here, so each dataset can be read on its own terms.')
  
@@ -907,7 +907,7 @@ with panel_overview:
     # List every feature the model uses with a plain description, so the SHAP charts on the Explanation tab can be read with confidence
     st.subheader('Features Used by the Model')
     st.caption('These are the patient details the model draws on to make its prediction. The same names appear on the '
-               'Explanation tab, so this table can be used as a reference for what each one means.')
+               'Explanation panel, so this table can be used as a reference for what each one means.')
     feature_table = pd.DataFrame(FEATURE_INFO[prefix], columns=['Feature', 'Description'])
     st.dataframe(feature_table, hide_index=True, use_container_width=True)
  
@@ -937,7 +937,7 @@ with panel_explain:
  
     # The SHAP explanations were calculated for the baseline model only, so this tab shows a note when a mitigation is chosen
     if mitigation_name != 'Baseline':
-        st.info('The explanations on this tab are calculated for the baseline model only, so they appear once the '
+        st.info('The explanations in this panel are calculated for the baseline model only, so they appear once the '
                 'baseline is selected in the control panel. The SHAP values were saved for the baseline model, since that '
                 'is the one being audited. SMOTE-NC and reweighting retrain the model, so their explanations would need '
                 'their own SHAP values, while the threshold optimiser leaves the model untouched and changes only the '

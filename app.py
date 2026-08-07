@@ -731,10 +731,6 @@ with tab_tradeoff:
             
         st.info(callout)
  
-    # A short framing so the clinical language below reads as the cost the developer weighs, not as advice to a clinician
-    st.caption('The panels below show who the current model and thresholds affect. The developer reads them to weigh the '
-               'clinical cost of the errors before deciding whether the model is ready to hand over to a clinician.')
- 
     # 8. Outcomes for a hundred patients
  
     # A rate is easier to judge as a count of people than as a decimal, so each error rate is drawn as a hundred squares

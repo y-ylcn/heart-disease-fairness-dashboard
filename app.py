@@ -904,7 +904,7 @@ with panel_overview:
  
     st.divider()
  
-    # List every feature the model uses with a plain description, so the SHAP charts on the Explanation tab can be read with confidence
+    # List every feature the model uses with a plain description, so the SHAP charts on the Explanation panel can be read with confidence
     st.subheader('Features Used by the Model')
     st.caption('These are the patient details the model draws on to make its prediction. The same names appear on the '
                'Explanation panel, so this table can be used as a reference for what each one means.')

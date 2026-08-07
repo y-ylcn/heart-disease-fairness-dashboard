@@ -440,8 +440,8 @@ with st.sidebar:
                                     'meaning a patient is flagged once the model sees at least an even chance of disease. '
                                     'Lowering the threshold flags more of them, raising it flags fewer.')
     tolerance = st.slider('Tolerance', 0.0, 0.5, 0.1, 0.01,
-                          help='How large a gap between the two groups still counts as fair. On the Fairness Metrics '
-                               'tab a metric turns green when it sits within this tolerance and red when it falls '
+                          help='How large a gap between the two groups still counts as fair. In the fairness metrics '
+                               'a metric turns green when it sits within this tolerance and red when it falls '
                                'outside. Moving the slider shows which metrics pass under a strict bar and which only '
                                'pass under a looser one.')
  
@@ -481,7 +481,7 @@ st.write('**The task sits in the first tab:** Fairness Metrics and Errors report
          'and shows the patients behind those numbers. The data and analysis behind them sit in the second tab.')
 tab_tradeoff, tab_analysis = st.tabs(['Fairness Metrics and Errors', 'Data and Analysis'])
  
-# The four panels open one at a time inside their own tab, so a second strip of tabs does not compete with the one above
+# The four panels open one at a time as expanders inside this tab, so a second strip of tabs does not compete with the one above
 with tab_analysis:
     panel_overview = st.expander('Dataset Overview')
     panel_explain = st.expander('Explanation')
@@ -732,7 +732,7 @@ with tab_tradeoff:
         st.info(callout)
  
     # A short framing so the clinical language below reads as the cost the developer weighs, not as advice to a clinician
-    st.caption('These panels show who the current model and thresholds affect. The developer reads them to weigh the '
+    st.caption('The panels below show who the current model and thresholds affect. The developer reads them to weigh the '
                'clinical cost of the errors before deciding whether the model is ready to hand over to a clinician.')
  
     # 8. Outcomes for a hundred patients
